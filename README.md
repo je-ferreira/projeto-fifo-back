@@ -28,7 +28,7 @@ Você precisará ter instalado em sua máquina:
 
 Feito isso, siga o passo-a-passo:
 
-- Pelo terminal, navegue até a pasta "web" do Projeto;
+- Pelo terminal, navegue até a pasta do Projeto;
 - Utilize o comando para instalar as dependências: `yarn install` 
 - Utilize o comando para rodar o projeto no navegador: `yarn start`
 
@@ -40,7 +40,7 @@ Você precisará ter instalado em sua máquina:
 
 Feito isso, siga o passo-a-passo:
 
-- Pelo terminal, navegue até a pasta "back" do Projeto;
+- Pelo terminal, navegue até a pasta do Projeto;
 - Utilize o comando para rodar: `mvn spring-boot:run`
 
 
