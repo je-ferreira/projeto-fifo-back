@@ -11,6 +11,7 @@ public class DispositivoDTO {
 	private String nome;
 	
 	public DispositivoDTO(Dispositivo d) {
-		
+		id = d.getId();
+		nome = d.getNome();
 	}
 }
