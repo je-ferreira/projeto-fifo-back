@@ -53,12 +53,12 @@ public class UsuarioService {
         return usuarioToUsuarioDTO(usuarioRepository.save(usuario));
     }
 
-    public void deleteById(long id) {
+    public void deleteById(Long id) {
         validateId(id);
         usuarioRepository.deleteById(id);
     }
 
-    private Usuario validateId(long id) {
+    private Usuario validateId(Long id) {
         return usuarioRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
         );

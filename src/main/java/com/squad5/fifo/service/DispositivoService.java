@@ -53,12 +53,12 @@ public class DispositivoService {
 		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
 	}
 
-	public void deleteById(long id) {
+	public void deleteById(Long id) {
 		validateId(id);
 		dispositivoRepository.deleteById(id);
 	}
 
-	private Dispositivo validateId(long id) {
+	private Dispositivo validateId(Long id) {
 		return dispositivoRepository.findById(id).orElseThrow(
 				() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
 		);
