@@ -5,8 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import com.squad5.fifo.model.Dispositivo;
 
-import java.util.Optional;
-
 @Repository
 public interface DispositivoRepository extends JpaRepository<Dispositivo, Long> {
 
