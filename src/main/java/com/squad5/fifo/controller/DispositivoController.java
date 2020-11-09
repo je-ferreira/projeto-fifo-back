@@ -46,7 +46,8 @@ public class DispositivoController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public void delete(@PathVariable long id) {
+	public void delete(@PathVariable Long id) {
 		dispositivoService.deleteById(id);
 	}
+
 }
