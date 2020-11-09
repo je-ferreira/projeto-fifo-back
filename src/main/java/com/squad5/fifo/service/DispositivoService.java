@@ -19,6 +19,7 @@ import com.squad5.fifo.repository.DispositivoRepository;
 public class DispositivoService {
 	
 	private static final String MSG_ID_NAO_ENCONTRADO = "Nenhum dispositivo com o id fornecido foi encontrado.";
+	private static final String MSG_NOME_JA_CADASTRADO = "Já há um dispositivo com o nome fornecido.";
 
 	private final DispositivoRepository dispositivoRepository;
 
@@ -35,12 +36,19 @@ public class DispositivoService {
 	}
 
 	public DispositivoDTO insert(DispositivoInsertDTO dispositivoInsertDTO) {
+		if(dispositivoRepository.findByNome(dispositivoInsertDTO.getNome()).isPresent())
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
 		Dispositivo dispositivo = dispositivoDTOToDispositivo(dispositivoInsertDTO);
 		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
 	}
 
 	public DispositivoDTO update(DispositivoUpdateDTO dispositivoUpdateDTO) {
 		Dispositivo dispositivo = validateId(dispositivoUpdateDTO.getId());
+		if(dispositivoUpdateDTO.getNome() != null &&
+				!dispositivoUpdateDTO.getNome().equals(dispositivo.getNome()) &&
+				dispositivoRepository.findByNome(dispositivoUpdateDTO.getNome()).isPresent())
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
+
 		modelMapper.map(dispositivoUpdateDTO, dispositivo);
 		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
 	}

@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface DispositivoRepository extends JpaRepository<Dispositivo, Long> {
 
+    Optional<Dispositivo> findByNome(String nome);
+
 }
