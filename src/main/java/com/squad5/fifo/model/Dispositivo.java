@@ -13,6 +13,7 @@ public class Dispositivo {
 	@Id @GeneratedValue
 	private Long id;
 
+	@Column(unique = true)
 	private String nome;
 
 }
