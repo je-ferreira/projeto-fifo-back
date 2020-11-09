@@ -11,7 +11,8 @@ import javax.persistence.*;
 public class Dispositivo {
 	
 	@Id @GeneratedValue
-	private long id;
+	private Long id;
 
 	private String nome;
+
 }

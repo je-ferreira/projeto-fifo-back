@@ -2,8 +2,9 @@ package com.squad5.fifo.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
+import com.squad5.fifo.dto.DispositivoInsertDTO;
+import com.squad5.fifo.dto.DispositivoUpdateDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,34 +17,36 @@ import org.springframework.web.bind.annotation.RestController;
 import com.squad5.fifo.dto.DispositivoDTO;
 import com.squad5.fifo.service.DispositivoService;
 
+import javax.validation.Valid;
+
 @RestController @RequestMapping("/dispositivos")
+@RequiredArgsConstructor
 public class DispositivoController {
 
-	@Autowired
-	private DispositivoService service;
+	private final DispositivoService dispositivoService;
 	
 	@GetMapping("/{id}")
-	public DispositivoDTO get(@PathVariable long id) {
-		return service.findById(id);				
+	public DispositivoDTO get(@PathVariable Long id) {
+		return dispositivoService.findById(id);
 	}
 	
 	@GetMapping
 	public List<DispositivoDTO> getAll() {
-		return service.findAll();				
+		return dispositivoService.findAll();
 	}
 	
 	@PostMapping
-	public DispositivoDTO post(@RequestBody @Validated DispositivoDTO dto) {
-		return service.insert(dto);				
+	public DispositivoDTO post(@RequestBody @Valid DispositivoInsertDTO dispositivoInsertDTO) {
+		return dispositivoService.insert(dispositivoInsertDTO);
 	}
 	
 	@PutMapping
-	public DispositivoDTO put(@RequestBody DispositivoDTO dto) {
-		return service.update(dto);				
+	public DispositivoDTO put(@RequestBody @Valid DispositivoUpdateDTO dispositivoUpdateDTO) {
+		return dispositivoService.update(dispositivoUpdateDTO);
 	}
 	
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable long id) {
-		service.deleteById(id);			
+		dispositivoService.deleteById(id);
 	}
 }
