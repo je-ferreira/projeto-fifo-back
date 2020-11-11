@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
-@Slf4j
-@RestControllerAdvice
+@Slf4j @RestControllerAdvice
 public class ExceptionHandlerAdvice {
 
     public static final String ERRO_INESPERADO = "Ocorreu um erro inesperado pelo sistema.";
