@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity @Data
 @NoArgsConstructor @AllArgsConstructor
-public class Dispositivo {
+public class TipoDispositivo {
 	
 	@Id @GeneratedValue
 	private Long id;
@@ -18,8 +18,9 @@ public class Dispositivo {
 	@Column(unique = true, nullable = false)
 	private String nome;
 
-	private boolean ativo;
+	@ManyToMany
+	private Set<Dispositivo> dispositivos;
 	
 	@ManyToMany
-	private Set<TipoDispositivo> tipos;
+	private Set<Jogo> jogos;
 }
