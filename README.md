@@ -36,6 +36,7 @@ Feito isso, siga o passo-a-passo:
 
 Você precisará ter instalado em sua máquina:
 
+- [Java (mínimo JDK 1.8.0_221)](https://www.oracle.com/technetwork/pt/java/javase/downloads/index.html)
 - [Maven](https://maven.apache.org/download.cgi)
 
 Feito isso, siga o passo-a-passo:
