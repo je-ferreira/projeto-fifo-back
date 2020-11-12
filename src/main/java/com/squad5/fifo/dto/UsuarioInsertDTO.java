@@ -17,4 +17,7 @@ public class UsuarioInsertDTO extends UsuarioDTO{
     @NotNull
     private String email;
 
+    @NotNull
+    private Boolean ativo;
+
 }

@@ -14,4 +14,7 @@ public class DispositivoInsertDTO extends DispositivoDTO {
     @NotNull
     private String nome;
 
+    @NotNull
+    private Boolean ativo;
+
 }
