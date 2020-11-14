@@ -11,4 +11,6 @@ public class UsuarioDTO {
 
     private String email;
 
+    private Boolean ativo;
+
 }
