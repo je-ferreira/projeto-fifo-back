@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -21,5 +21,5 @@ public class Jogo {
 	private boolean ativo;
 	
 	@ManyToMany
-	private Set<TipoDispositivo> dispositivos;
+	private List<TipoDispositivo> tiposDispositivo;
 }
