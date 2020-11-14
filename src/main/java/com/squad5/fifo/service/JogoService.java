@@ -22,6 +22,7 @@ public class JogoService {
 	//Messages
 	private static final String MSG_ID_NAO_ENCONTRADO = "Nenhum jogo com o id fornecido foi encontrado.";
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um jogo com o nome fornecido.";
+	private static final String MSG_NOME_VAZIO = "Nome vazio.";
 
 	//Dependencies
 	private final JogoRepository jogoRepository;
@@ -39,6 +40,8 @@ public class JogoService {
 	}
 	
 	public JogoDTO insert(JogoInsertDTO insertDTO) {
+		if (insertDTO.getNome().isBlank())
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_VAZIO);
 		if (exists(insertDTO.getNome()))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
 		
@@ -50,8 +53,13 @@ public class JogoService {
 		Jogo jogo = validateId(updateDTO.getId());
 		
 		String newNome = updateDTO.getNome();
-		if (newNome != null && !newNome.equals(jogo.getNome()) && exists(newNome))
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
+		if (newNome != null)
+		{
+			if (newNome.isBlank())
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_VAZIO);		
+			if (!newNome.equals(jogo.getNome()) && exists(newNome))
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
+		}			
 		
 		jogo = jogoRepository.save(dtoToJogo(updateDTO));
 		return jogoToDTO(jogo);
