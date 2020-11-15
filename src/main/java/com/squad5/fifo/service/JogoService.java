@@ -40,7 +40,7 @@ public class JogoService {
 	}
 	
 	public JogoDTO insert(JogoInsertDTO insertDTO) {
-		if (insertDTO.getNome().isBlank())
+		if (insertDTO.getNome() == null || insertDTO.getNome().isBlank())
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_VAZIO);
 		if (exists(insertDTO.getNome()))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
