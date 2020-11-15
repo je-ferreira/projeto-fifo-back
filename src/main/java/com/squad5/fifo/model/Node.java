@@ -1,47 +1,25 @@
 package com.squad5.fifo.model;
 
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import lombok.Data;
 
-import org.hibernate.engine.internal.ForeignKeys;
+import javax.persistence.*;
+import java.util.Date;
 
+@Entity @Data
 public class Node {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)//Chave Primaria gerada automaticamente
+	@GeneratedValue
 	private Long id;
-	private String entrada;
 
-	public Long getId() {
-		return id;
-	}
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
+	private Date entrada;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getEntrada() {
-		return entrada;
-	}
-
-	public void setEntrada(String entrada) {
-		this.entrada = entrada;
-	}
-
-	public Metodo getMetodo() {
-		return metodo;
-	}
-
-	public void setMetodo(Metodo metodo) {
-		this.metodo = metodo;
-	}
-
-	@JoinColumn(name = "metodo", foreignKey = @ForeignKey(name = "metod_id")) // Chave Estrangeira
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private Metodo metodo;
+
+	@ManyToOne
+	private Node superNode;
 
 }

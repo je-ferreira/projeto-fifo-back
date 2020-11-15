@@ -1,9 +1,8 @@
 package com.squad5.fifo.repository;
 
+import com.squad5.fifo.model.Dispositivo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.squad5.fifo.model.Dispositivo;
 
 import java.util.Optional;
 
