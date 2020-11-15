@@ -4,24 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.*;
 
 @Entity @Data
 @NoArgsConstructor @AllArgsConstructor
-public class Dispositivo {
+public class Jogo {
 	
 	@Id @GeneratedValue
 	private Long id;
 
 	@Column(unique = true, nullable = false)
 	private String nome;
-
-	@Column(nullable = false)
-	private Boolean ativo;
-
-	@ManyToMany
-	private Set<TipoDispositivo> tipos;
 	
+	private boolean ativo;
+	
+	@ManyToMany
+	private List<TipoDispositivo> tiposDispositivo;
 }
