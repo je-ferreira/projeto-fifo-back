@@ -11,7 +11,9 @@ import org.springframework.web.server.ResponseStatusException;
 import com.squad5.fifo.dto.JogoDTO;
 import com.squad5.fifo.dto.JogoInsertDTO;
 import com.squad5.fifo.dto.JogoUpdateDTO;
+import com.squad5.fifo.dto.TipoDispositivoDTO;
 import com.squad5.fifo.model.Jogo;
+import com.squad5.fifo.model.TipoDispositivo;
 import com.squad5.fifo.repository.JogoRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,9 +25,12 @@ public class JogoService {
 	private static final String MSG_ID_NAO_ENCONTRADO = "Nenhum jogo com o id fornecido foi encontrado.";
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um jogo com o nome fornecido.";
 	private static final String MSG_NOME_VAZIO = "Nome vazio.";
+	
+	private static final String MSG_ID_TIPO_NAO_ENCONTRADO = "Não há nenhum tipo de dispositivo com esse id vinculado ao jogo.";
 
 	//Dependencies
 	private final JogoRepository jogoRepository;
+	private final TipoDispositivoService tipoDispositivoService;
 	private final ModelMapper modelMapper;
 	
 	//CRUD
@@ -68,6 +73,27 @@ public class JogoService {
 	public void deleteById(Long id) {
 		validateId(id);
 		jogoRepository.deleteById(id);
+	}
+	
+	//TipoDispositivo
+	public JogoDTO addTipoDispositivo(Long jogoId, Long tipoId) {
+		Jogo jogo = validateId(jogoId);
+		TipoDispositivoDTO tipoDTO = tipoDispositivoService.findById(tipoId);
+
+		jogo.getTiposDispositivo().add(modelMapper.map(tipoDTO, TipoDispositivo.class));
+		jogo = jogoRepository.save(jogo);
+		return jogoToDTO(jogo);
+	}
+	
+	public JogoDTO removeTipoDispositivo(Long jogoId, Long tipoId) {
+		Jogo jogo = validateId(jogoId);
+		tipoDispositivoService.findById(tipoId);
+		
+		if (!jogo.getTiposDispositivo().removeIf(tipo -> tipo.getId() == tipoId))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_TIPO_NAO_ENCONTRADO);
+			
+		jogo = jogoRepository.save(jogo);
+		return jogoToDTO(jogo);
 	}
 	
 	//Auxiliary methods
