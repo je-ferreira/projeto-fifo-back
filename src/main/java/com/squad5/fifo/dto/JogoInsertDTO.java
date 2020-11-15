@@ -10,4 +10,7 @@ public class JogoInsertDTO extends JogoDTO {
 
 	@JsonIgnore
 	private Long id;
+	
+	@JsonIgnore
+	private boolean ativo;
 }

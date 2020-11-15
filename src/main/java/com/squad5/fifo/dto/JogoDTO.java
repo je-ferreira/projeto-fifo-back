@@ -9,6 +9,7 @@ public class JogoDTO {
 
 	private Long id;
 	private String nome;
+	private boolean ativo;
 	
 	// private List<TipoDispositivo> tiposDispositivo;
 }
