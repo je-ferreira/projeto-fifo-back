@@ -2,6 +2,8 @@ package com.squad5.fifo.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class JogoDTO {
 
@@ -10,5 +12,7 @@ public class JogoDTO {
 	private String nome;
 
 	private Boolean ativo;
+
+	private List<Long> tipoDispositivoIdList;
 
 }

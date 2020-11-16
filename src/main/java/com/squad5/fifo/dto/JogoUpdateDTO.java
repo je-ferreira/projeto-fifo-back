@@ -2,9 +2,12 @@ package com.squad5.fifo.dto;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.squad5.fifo.infra.NullOrNotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 @Data @EqualsAndHashCode(callSuper = true)
 public class JogoUpdateDTO extends JogoDTO {
@@ -14,5 +17,8 @@ public class JogoUpdateDTO extends JogoDTO {
 
 	@NullOrNotBlank
 	private String nome;
+
+	@JsonIgnore
+	private List<Long> tipoDispositivoIdList;
 
 }

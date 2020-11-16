@@ -1,9 +1,11 @@
 package com.squad5.fifo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.squad5.fifo.dto.TipoDispositivoDTO;
+import com.squad5.fifo.model.TipoDispositivo;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class JogoService {
 	private static final String MSG_ID_NAO_ENCONTRADO = "Nenhum jogo com o id fornecido foi encontrado.";
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um jogo com o nome fornecido.";
 	private static final String MSG_ID_TIPO_NAO_ENCONTRADO = "Não há nenhum tipo de dispositivo com esse id vinculado ao jogo.";
+	private static final String MSG_TIPO_JA_CADASTRADO = "O tipo de dispositivo informado já está relacionado ao jogo em questão.";
 
 	//Dependencies
 	private final JogoRepository jogoRepository;
@@ -46,6 +49,7 @@ public class JogoService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
 
 		Jogo jogo = JogoDTOToJogo(insertDTO);
+		jogo.setTipoDispositivoList(new ArrayList<>());
 		return jogoToJogoDTO(jogoRepository.save(jogo));
 	}
 	
@@ -70,6 +74,9 @@ public class JogoService {
 	public JogoDTO addTipoDispositivo(Long jogoId, Long tipoDispositivoId) {
 		Jogo jogo = validateId(jogoId);
 		TipoDispositivoDTO tipoDispositivoDTO = tipoDispositivoService.findById(tipoDispositivoId);
+
+		if(jogo.getTipoDispositivoList().stream().anyMatch(tipoDispositivo -> tipoDispositivo.getId().equals(tipoDispositivoId)))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_TIPO_JA_CADASTRADO);
 
 		jogo.getTipoDispositivoList().add(tipoDispositivoService.dtoTotipoDispositivo(tipoDispositivoDTO));
 		return jogoToJogoDTO(jogoRepository.save(jogo));
@@ -97,11 +104,22 @@ public class JogoService {
 	}
 	
 	private JogoDTO jogoToJogoDTO(Jogo jogo) {
-		return modelMapper.map(jogo, JogoDTO.class);
+		JogoDTO jogoDTO = modelMapper.map(jogo, JogoDTO.class);
+		jogo.getTipoDispositivoList().stream()
+				.map(TipoDispositivo::getId)
+				.forEach(jogoDTO.getTipoDispositivoIdList()::add);
+
+		return jogoDTO;
 	}
 	
 	private Jogo JogoDTOToJogo(JogoDTO jogoDTO) {
-		return modelMapper.map(jogoDTO, Jogo.class);
+		Jogo jogo = modelMapper.map(jogoDTO, Jogo.class);
+		if(jogoDTO.getTipoDispositivoIdList() != null)
+			jogo.setTipoDispositivoList(jogoDTO.getTipoDispositivoIdList().stream()
+					.map(tipoDispositivoService::validateId)
+					.collect(Collectors.toList()));
+
+		return jogo;
 	}
 
 }

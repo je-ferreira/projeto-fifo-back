@@ -51,4 +51,14 @@ public class JogoController {
 		jogoService.deleteById(id);
 	}
 
+	@PutMapping("/{jogoId}/tiposDispositivo/add/{tipoDispositivoId}")
+	public JogoDTO addTipoDispositivo(@PathVariable Long jogoId, @PathVariable Long tipoDispositivoID){
+		return jogoService.addTipoDispositivo(jogoId, tipoDispositivoID);
+	}
+
+	@PutMapping("/{jogoId}/tiposDispositivo/remove/{tipoDispositivoId}")
+	public JogoDTO removeTipoDispositivo(@PathVariable Long jogoId, @PathVariable Long tipoDispositivoID){
+		return jogoService.removeTipoDispositivo(jogoId, tipoDispositivoID);
+	}
+
 }

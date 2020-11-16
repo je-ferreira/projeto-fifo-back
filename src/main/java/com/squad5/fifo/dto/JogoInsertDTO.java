@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data @EqualsAndHashCode(callSuper = true)
 public class JogoInsertDTO extends JogoDTO {
@@ -19,5 +20,8 @@ public class JogoInsertDTO extends JogoDTO {
 	
 	@NotNull
 	private Boolean ativo;
+
+	@JsonIgnore
+	private List<Long> tipoDispositivoIdList;
 
 }
