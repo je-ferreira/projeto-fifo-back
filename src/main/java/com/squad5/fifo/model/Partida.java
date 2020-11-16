@@ -17,6 +17,9 @@ public class Partida {
 	private String resultado;
 
 	@ManyToOne(optional = false)
-	private HisNode hisNode;
+	private Jogo jogo;
+
+	@ManyToOne(optional = false)
+	private Node node;
 
 }

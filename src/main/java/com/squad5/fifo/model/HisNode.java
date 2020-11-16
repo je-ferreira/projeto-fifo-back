@@ -1,6 +1,8 @@
 package com.squad5.fifo.model;
 
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -23,6 +25,7 @@ public class HisNode {
 	private HisNode superHisNode;
 
 	@ManyToMany(fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Usuario> usuarioList;
 
 }

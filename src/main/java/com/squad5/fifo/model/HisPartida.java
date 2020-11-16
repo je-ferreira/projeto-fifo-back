@@ -17,4 +17,7 @@ public class HisPartida {
 	@ManyToOne(optional = false)
 	private HisNode hisNode;
 
+	@ManyToOne(optional = false)
+	private Jogo jogo;
+
 }

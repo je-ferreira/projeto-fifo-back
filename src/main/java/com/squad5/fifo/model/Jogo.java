@@ -18,8 +18,9 @@ public class Jogo {
 	@Column(unique = true, nullable = false)
 	private String nome;
 	
-	private boolean ativo;
+	private Boolean ativo;
 	
-	@ManyToMany
-	private List<TipoDispositivo> tiposDispositivo;
+	@ManyToMany(fetch = FetchType.EAGER)
+	private List<TipoDispositivo> tipoDispositivoList;
+
 }

@@ -1,10 +1,13 @@
 package com.squad5.fifo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.squad5.fifo.dto.DispositivoInsertDTO;
 import com.squad5.fifo.dto.DispositivoUpdateDTO;
+import com.squad5.fifo.dto.TipoDispositivoDTO;
+import com.squad5.fifo.model.TipoDispositivo;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -20,11 +23,16 @@ public class DispositivoService {
 	
 	private static final String MSG_ID_NAO_ENCONTRADO = "Nenhum dispositivo com o id fornecido foi encontrado.";
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um dispositivo com o nome fornecido.";
+	private static final String MSG_ID_TIPO_NAO_ENCONTRADO = "Não há nenhum tipo de dispositivo com esse id vinculado ao dispositivo.";
 
 	private final DispositivoRepository dispositivoRepository;
 
 	private final ModelMapper modelMapper;
-	
+
+	private final NodeService nodeService;
+
+	private final TipoDispositivoService tipoDispositivoService;
+
 	public DispositivoDTO findById(Long id) {
 		return dispositivoToDispositivoDTO(validateId(id));
 	}
@@ -38,12 +46,15 @@ public class DispositivoService {
 	public DispositivoDTO insert(DispositivoInsertDTO dispositivoInsertDTO) {
 		if(dispositivoRepository.findByNome(dispositivoInsertDTO.getNome()).isPresent())
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
+
 		Dispositivo dispositivo = dispositivoDTOToDispositivo(dispositivoInsertDTO);
+		dispositivo.setTipoDispositivoList(new ArrayList<>());
 		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
 	}
 
 	public DispositivoDTO update(DispositivoUpdateDTO dispositivoUpdateDTO) {
 		Dispositivo dispositivo = validateId(dispositivoUpdateDTO.getId());
+
 		if(dispositivoUpdateDTO.getNome() != null &&
 				!dispositivoUpdateDTO.getNome().equals(dispositivo.getNome()) &&
 				dispositivoRepository.findByNome(dispositivoUpdateDTO.getNome()).isPresent())
@@ -58,18 +69,53 @@ public class DispositivoService {
 		dispositivoRepository.deleteById(id);
 	}
 
-	private Dispositivo validateId(Long id) {
+	public DispositivoDTO addTipoDispositivo(Long dispositivoId, Long tipoDispositivoId) {
+		Dispositivo dispositivo = validateId(dispositivoId);
+		TipoDispositivoDTO tipoDispositivoDTO = tipoDispositivoService.findById(tipoDispositivoId);
+
+		dispositivo.getTipoDispositivoList().add(tipoDispositivoService.dtoTotipoDispositivo(tipoDispositivoDTO));
+		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
+	}
+
+	public DispositivoDTO removeTipoDispositivo(Long dispositivoId, Long tipoDispositivoId) {
+		Dispositivo dispositivo = validateId(dispositivoId);
+		tipoDispositivoService.validateId(tipoDispositivoId);
+
+		if (!dispositivo.getTipoDispositivoList().removeIf(tipoDispositivo -> tipoDispositivo.getId().equals(tipoDispositivoId)))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_TIPO_NAO_ENCONTRADO);
+
+		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
+	}
+
+	Dispositivo validateId(Long id) {
 		return dispositivoRepository.findById(id).orElseThrow(
 				() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
 		);
 	}
 
-	private DispositivoDTO dispositivoToDispositivoDTO(Dispositivo dispositivo){
-		return modelMapper.map(dispositivo, DispositivoDTO.class);
+	DispositivoDTO dispositivoToDispositivoDTO(Dispositivo dispositivo){
+		DispositivoDTO dispositivoDTO = modelMapper.map(dispositivo, DispositivoDTO.class);
+		dispositivoDTO.setAtualId(dispositivo.getAtual() == null ? null : dispositivo.getAtual().getId());
+		dispositivoDTO.setFilaId(dispositivo.getFila() == null ? null : dispositivo.getFila().getId());
+		dispositivo.getTipoDispositivoList().stream()
+				.map(TipoDispositivo::getId)
+				.forEach(dispositivoDTO.getTipoDispositivoIdList()::add);
+
+		return dispositivoDTO;
 	}
 
-	private Dispositivo dispositivoDTOToDispositivo(DispositivoDTO dispositivoDTO){
-		return modelMapper.map(dispositivoDTO, Dispositivo.class);
+	Dispositivo dispositivoDTOToDispositivo(DispositivoDTO dispositivoDTO){
+		Dispositivo dispositivo = modelMapper.map(dispositivoDTO, Dispositivo.class);
+		if(dispositivoDTO.getAtualId() != null)
+			dispositivo.setAtual(nodeService.validateId(dispositivoDTO.getAtualId()));
+		if(dispositivoDTO.getFilaId() != null)
+			dispositivo.setFila(nodeService.validateId(dispositivoDTO.getFilaId()));
+		if(dispositivoDTO.getTipoDispositivoIdList() != null)
+			dispositivo.setTipoDispositivoList(dispositivoDTO.getTipoDispositivoIdList().stream()
+					.map(tipoDispositivoService::validateId)
+					.collect(Collectors.toList()));
+
+		return dispositivo;
 	}
 
 }

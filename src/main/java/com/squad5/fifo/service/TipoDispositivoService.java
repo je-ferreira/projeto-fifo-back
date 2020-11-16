@@ -22,7 +22,6 @@ public class TipoDispositivoService {
 	//Messages
 	private static final String MSG_ID_NAO_ENCONTRADO = "Nenhum tipo de dispositivo com o id fornecido foi encontrado.";
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um tipo de dispositivo com o nome fornecido.";
-	private static final String MSG_NOME_VAZIO = "Nome vazio.";
 
 	//Dependencies
 	private final TipoDispositivoRepository tipoDispositivoRepository;
@@ -35,33 +34,27 @@ public class TipoDispositivoService {
 	
 	public List<TipoDispositivoDTO> findAll() {
 		return tipoDispositivoRepository.findAll().stream()
-				.map(j -> tipoDispositivoToDTO(j))
+				.map(this::tipoDispositivoToDTO)
 				.collect(Collectors.toList());				
 	}
 	
 	public TipoDispositivoDTO insert(TipoDispositivoInsertDTO insertDTO) {
-		if (insertDTO.getNome() == null || insertDTO.getNome().isBlank())
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_VAZIO);
-		if (exists(insertDTO.getNome()))
+		if (nomeJaCadastrado(insertDTO.getNome()))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
-		
+
 		TipoDispositivo tipoDispositivo = tipoDispositivoRepository.save(dtoTotipoDispositivo(insertDTO));
 		return tipoDispositivoToDTO(tipoDispositivo);
 	}
 	
-	public TipoDispositivoDTO update(TipoDispositivoUpdateDTO updateDTO) {
-		TipoDispositivo tipoDispositivo = validateId(updateDTO.getId());
-		
-		String newNome = updateDTO.getNome();
-		if (newNome != null)
-		{
-			if (newNome.isBlank())
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_VAZIO);		
-			if (!newNome.equals(tipoDispositivo.getNome()) && exists(newNome))
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
-		}			
-		
-		tipoDispositivo = tipoDispositivoRepository.save(dtoTotipoDispositivo(updateDTO));
+	public TipoDispositivoDTO update(TipoDispositivoUpdateDTO tipoDispositivoUpdateDTO) {
+		TipoDispositivo tipoDispositivo = validateId(tipoDispositivoUpdateDTO.getId());
+
+		if(tipoDispositivoUpdateDTO.getNome() != null &&
+				!tipoDispositivoUpdateDTO.getNome().equals(tipoDispositivo.getNome()) &&
+				nomeJaCadastrado(tipoDispositivoUpdateDTO.getNome()))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
+
+		modelMapper.map(tipoDispositivoUpdateDTO, tipoDispositivo);
 		return tipoDispositivoToDTO(tipoDispositivo);
 	}
 	
@@ -71,21 +64,22 @@ public class TipoDispositivoService {
 	}
 	
 	//Auxiliary methods
-	private boolean exists(String nome) {
+	boolean nomeJaCadastrado(String nome) {
 		return tipoDispositivoRepository.findByNome(nome).isPresent();
 	}
 	
-	private TipoDispositivo validateId(Long id) {
+	TipoDispositivo validateId(Long id) {
 		return tipoDispositivoRepository.findById(id).orElseThrow(
 				() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
 		);
 	}
 	
-	private TipoDispositivoDTO tipoDispositivoToDTO(TipoDispositivo tipoDispositivo) {
+	TipoDispositivoDTO tipoDispositivoToDTO(TipoDispositivo tipoDispositivo) {
 		return modelMapper.map(tipoDispositivo, TipoDispositivoDTO.class);
 	}
 	
-	private TipoDispositivo dtoTotipoDispositivo(TipoDispositivoDTO tipoDispositivoDTO) {
+	TipoDispositivo dtoTotipoDispositivo(TipoDispositivoDTO tipoDispositivoDTO) {
 		return modelMapper.map(tipoDispositivoDTO, TipoDispositivo.class);
 	}
+
 }

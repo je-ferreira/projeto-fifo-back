@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -21,7 +21,13 @@ public class Dispositivo {
 	@Column(nullable = false)
 	private Boolean ativo;
 
-	@ManyToMany
-	private Set<TipoDispositivo> tipos;
+	@ManyToOne
+	private Node fila;
+
+	@ManyToOne
+	private Node atual;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	private List<TipoDispositivo> tipoDispositivoList;
 	
 }

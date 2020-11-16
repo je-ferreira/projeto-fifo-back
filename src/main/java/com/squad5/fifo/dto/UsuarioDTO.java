@@ -13,4 +13,8 @@ public class UsuarioDTO {
 
     private Boolean ativo;
 
+    private Long cargoUsuario;
+
+    private Long node;
+
 }

@@ -30,24 +30,25 @@ public class JogoController {
 	public JogoDTO get(@PathVariable Long id) {
 		return jogoService.findById(id);
 	}
-	
+
 	@GetMapping
 	public List<JogoDTO> getAll() {
 		return jogoService.findAll();
 	}
-	
+
 	@PostMapping
-	public JogoDTO post(@RequestBody @Valid JogoInsertDTO insertDTO) {
-		return jogoService.insert(insertDTO);
+	public JogoDTO post(@RequestBody @Valid JogoInsertDTO jogoInsertDTO) {
+		return jogoService.insert(jogoInsertDTO);
 	}
-	
+
 	@PutMapping
-	public JogoDTO put(@RequestBody @Valid JogoUpdateDTO updateDTO) {
-		return jogoService.update(updateDTO);
+	public JogoDTO put(@RequestBody @Valid JogoUpdateDTO jogoUpdateDTO) {
+		return jogoService.update(jogoUpdateDTO);
 	}
 	
 	@DeleteMapping("/{id}")
-	public void deleteById(@PathVariable Long id) {
+	public void delete(@PathVariable Long id) {
 		jogoService.deleteById(id);
 	}
+
 }

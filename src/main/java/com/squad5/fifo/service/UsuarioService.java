@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service @RequiredArgsConstructor
@@ -23,6 +24,10 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
     private final ModelMapper modelMapper;
+
+    private final CargoUsuarioService cargoUsuarioService;
+
+    private final NodeService nodeService;
 
     public UsuarioDTO findById(Long id) {
         return usuarioToUsuarioDTO(validateId(id));
@@ -50,6 +55,11 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_EMAIL_JA_CADASTRADO);
 
         modelMapper.map(usuarioUpdateDTO, usuario);
+        usuario.setCargoUsuario(mergeIdToNull(
+                usuarioUpdateDTO.getCargoUsuario(), null, usuario.getCargoUsuario(), cargoUsuarioService::validateId
+        ));
+        usuario.setNode(mergeIdToNull(usuarioUpdateDTO.getNode(), 0L, usuario.getNode(), nodeService::validateId));
+
         return usuarioToUsuarioDTO(usuarioRepository.save(usuario));
     }
 
@@ -58,18 +68,32 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
-    private Usuario validateId(Long id) {
+    Usuario validateId(Long id) {
         return usuarioRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
         );
     }
 
-    private UsuarioDTO usuarioToUsuarioDTO(Usuario usuario){
-        return modelMapper.map(usuario, UsuarioDTO.class);
+    UsuarioDTO usuarioToUsuarioDTO(Usuario usuario){
+        UsuarioDTO usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
+        usuarioDTO.setCargoUsuario(usuario.getCargoUsuario().getId());
+        usuarioDTO.setNode(usuario.getNode() == null ? null : usuario.getNode().getId());
+        return usuarioDTO;
     }
 
-    private Usuario usuarioDTOToUsuario(UsuarioDTO usuarioDTO){
-        return modelMapper.map(usuarioDTO, Usuario.class);
+    Usuario usuarioDTOToUsuario(UsuarioDTO usuarioDTO){
+        Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
+        usuario.setCargoUsuario(cargoUsuarioService.validateId(usuarioDTO.getCargoUsuario()));
+        if(usuarioDTO.getNode() != null)
+            usuario.setNode(nodeService.validateId(usuarioDTO.getNode()));
+
+        return usuario;
+    }
+
+    private <T, U> T mergeIdToNull(U id, U nullCase, T atual, Function<U, T> finder){
+        if(id == null) return atual;
+        if(id.equals(nullCase)) return null;
+        return finder.apply(id);
     }
 
 }

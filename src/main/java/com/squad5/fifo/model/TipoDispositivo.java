@@ -18,9 +18,4 @@ public class TipoDispositivo {
 	@Column(unique = true, nullable = false)
 	private String nome;
 
-	@ManyToMany
-	private Set<Dispositivo> dispositivos;
-	
-	@ManyToMany
-	private Set<Jogo> jogos;
 }

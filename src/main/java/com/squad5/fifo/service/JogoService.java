@@ -3,6 +3,7 @@ package com.squad5.fifo.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.squad5.fifo.dto.TipoDispositivoDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.squad5.fifo.dto.JogoDTO;
 import com.squad5.fifo.dto.JogoInsertDTO;
 import com.squad5.fifo.dto.JogoUpdateDTO;
-import com.squad5.fifo.dto.TipoDispositivoDTO;
 import com.squad5.fifo.model.Jogo;
-import com.squad5.fifo.model.TipoDispositivo;
 import com.squad5.fifo.repository.JogoRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +23,6 @@ public class JogoService {
 	//Messages
 	private static final String MSG_ID_NAO_ENCONTRADO = "Nenhum jogo com o id fornecido foi encontrado.";
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um jogo com o nome fornecido.";
-	private static final String MSG_NOME_VAZIO = "Nome vazio.";
-	
 	private static final String MSG_ID_TIPO_NAO_ENCONTRADO = "Não há nenhum tipo de dispositivo com esse id vinculado ao jogo.";
 
 	//Dependencies
@@ -35,39 +32,33 @@ public class JogoService {
 	
 	//CRUD
 	public JogoDTO findById(Long id) {
-		return jogoToDTO(validateId(id));
+		return jogoToJogoDTO(validateId(id));
 	}
 	
 	public List<JogoDTO> findAll() {
 		return jogoRepository.findAll().stream()
-				.map(j -> jogoToDTO(j))
+				.map(this::jogoToJogoDTO)
 				.collect(Collectors.toList());				
 	}
 	
 	public JogoDTO insert(JogoInsertDTO insertDTO) {
-		if (insertDTO.getNome() == null || insertDTO.getNome().isBlank())
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_VAZIO);
-		if (exists(insertDTO.getNome()))
+		if (nomeJaCadastrado(insertDTO.getNome()))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
-		
-		Jogo jogo = jogoRepository.save(dtoToJogo(insertDTO));
-		return jogoToDTO(jogo);
+
+		Jogo jogo = JogoDTOToJogo(insertDTO);
+		return jogoToJogoDTO(jogoRepository.save(jogo));
 	}
 	
-	public JogoDTO update(JogoUpdateDTO updateDTO) {
-		Jogo jogo = validateId(updateDTO.getId());
-		
-		String newNome = updateDTO.getNome();
-		if (newNome != null)
-		{
-			if (newNome.isBlank())
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_VAZIO);		
-			if (!newNome.equals(jogo.getNome()) && exists(newNome))
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
-		}			
-		
-		jogo = jogoRepository.save(dtoToJogo(updateDTO));
-		return jogoToDTO(jogo);
+	public JogoDTO update(JogoUpdateDTO jogoUpdateDTO) {
+		Jogo jogo = validateId(jogoUpdateDTO.getId());
+
+		if(jogoUpdateDTO.getNome() != null &&
+				!jogoUpdateDTO.getNome().equals(jogo.getNome()) &&
+				nomeJaCadastrado(jogoUpdateDTO.getNome()))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
+
+		modelMapper.map(jogoUpdateDTO, jogo);
+		return jogoToJogoDTO(jogoRepository.save(jogo));
 	}
 	
 	public void deleteById(Long id) {
@@ -76,28 +67,26 @@ public class JogoService {
 	}
 	
 	//TipoDispositivo
-	public JogoDTO addTipoDispositivo(Long jogoId, Long tipoId) {
+	public JogoDTO addTipoDispositivo(Long jogoId, Long tipoDispositivoId) {
 		Jogo jogo = validateId(jogoId);
-		TipoDispositivoDTO tipoDTO = tipoDispositivoService.findById(tipoId);
+		TipoDispositivoDTO tipoDispositivoDTO = tipoDispositivoService.findById(tipoDispositivoId);
 
-		jogo.getTiposDispositivo().add(modelMapper.map(tipoDTO, TipoDispositivo.class));
-		jogo = jogoRepository.save(jogo);
-		return jogoToDTO(jogo);
+		jogo.getTipoDispositivoList().add(tipoDispositivoService.dtoTotipoDispositivo(tipoDispositivoDTO));
+		return jogoToJogoDTO(jogoRepository.save(jogo));
 	}
 	
-	public JogoDTO removeTipoDispositivo(Long jogoId, Long tipoId) {
+	public JogoDTO removeTipoDispositivo(Long jogoId, Long tipoDispositivoId) {
 		Jogo jogo = validateId(jogoId);
-		tipoDispositivoService.findById(tipoId);
+		tipoDispositivoService.validateId(tipoDispositivoId);
 		
-		if (!jogo.getTiposDispositivo().removeIf(tipo -> tipo.getId() == tipoId))
+		if (!jogo.getTipoDispositivoList().removeIf(tipoDispositivo -> tipoDispositivo.getId().equals(tipoDispositivoId)))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_TIPO_NAO_ENCONTRADO);
-			
-		jogo = jogoRepository.save(jogo);
-		return jogoToDTO(jogo);
+
+		return jogoToJogoDTO(jogoRepository.save(jogo));
 	}
-	
+
 	//Auxiliary methods
-	private boolean exists(String nome) {
+	private boolean nomeJaCadastrado(String nome) {
 		return jogoRepository.findByNome(nome).isPresent();
 	}
 	
@@ -107,11 +96,12 @@ public class JogoService {
 		);
 	}
 	
-	private JogoDTO jogoToDTO(Jogo jogo) {
+	private JogoDTO jogoToJogoDTO(Jogo jogo) {
 		return modelMapper.map(jogo, JogoDTO.class);
 	}
 	
-	private Jogo dtoToJogo(JogoDTO jogoDTO) {
+	private Jogo JogoDTOToJogo(JogoDTO jogoDTO) {
 		return modelMapper.map(jogoDTO, Jogo.class);
 	}
+
 }

@@ -50,4 +50,14 @@ public class DispositivoController {
 		dispositivoService.deleteById(id);
 	}
 
+	@PutMapping("/{dispositivoId}/tiposDispositivo/add/{tipoDispositivoId}")
+	public DispositivoDTO addTipoDispositivo(@PathVariable Long dispositivoId, @PathVariable Long tipoDispositivoID){
+		return dispositivoService.addTipoDispositivo(dispositivoId, tipoDispositivoID);
+	}
+
+	@PutMapping("/{dispositivoId}/tiposDispositivo/remove/{tipoDispositivoId}")
+	public DispositivoDTO removeTipoDispositivo(@PathVariable Long dispositivoId, @PathVariable Long tipoDispositivoID){
+		return dispositivoService.removeTipoDispositivo(dispositivoId, tipoDispositivoID);
+	}
+
 }

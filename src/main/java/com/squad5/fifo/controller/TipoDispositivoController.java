@@ -37,17 +37,17 @@ public class TipoDispositivoController {
 	}
 	
 	@PostMapping
-	public TipoDispositivoDTO post(@RequestBody @Valid TipoDispositivoInsertDTO insertDTO) {
-		return tipoDispositivoService.insert(insertDTO);
+	public TipoDispositivoDTO post(@RequestBody @Valid TipoDispositivoInsertDTO tipoDispositivoInsertDTO) {
+		return tipoDispositivoService.insert(tipoDispositivoInsertDTO);
 	}
 	
 	@PutMapping
-	public TipoDispositivoDTO put(@RequestBody @Valid TipoDispositivoUpdateDTO updateDTO) {
-		return tipoDispositivoService.update(updateDTO);
+	public TipoDispositivoDTO put(@RequestBody @Valid TipoDispositivoUpdateDTO tipoDispositivoUpdateDTO) {
+		return tipoDispositivoService.update(tipoDispositivoUpdateDTO);
 	}
 	
 	@DeleteMapping("/{id}")
-	public void deleteById(@PathVariable Long id) {
+	public void delete(@PathVariable Long id) {
 		tipoDispositivoService.deleteById(id);
 	}
 }
