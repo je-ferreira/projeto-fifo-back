@@ -24,6 +24,7 @@ public class DispositivoService {
 	private static final String MSG_ID_NAO_ENCONTRADO = "Nenhum dispositivo com o id fornecido foi encontrado.";
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um dispositivo com o nome fornecido.";
 	private static final String MSG_ID_TIPO_NAO_ENCONTRADO = "Não há nenhum tipo de dispositivo com esse id vinculado ao dispositivo.";
+	private static final String MSG_TIPO_JA_CADASTRADO = "O tipo de dispositivo informado já está relacionado ao dispositivo em questão.";
 
 	private final DispositivoRepository dispositivoRepository;
 
@@ -72,6 +73,9 @@ public class DispositivoService {
 	public DispositivoDTO addTipoDispositivo(Long dispositivoId, Long tipoDispositivoId) {
 		Dispositivo dispositivo = validateId(dispositivoId);
 		TipoDispositivoDTO tipoDispositivoDTO = tipoDispositivoService.findById(tipoDispositivoId);
+
+		if(dispositivo.getTipoDispositivoList().stream().anyMatch(tipoDispositivo -> tipoDispositivo.getId().equals(tipoDispositivoId)))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_TIPO_JA_CADASTRADO);
 
 		dispositivo.getTipoDispositivoList().add(tipoDispositivoService.dtoTotipoDispositivo(tipoDispositivoDTO));
 		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
