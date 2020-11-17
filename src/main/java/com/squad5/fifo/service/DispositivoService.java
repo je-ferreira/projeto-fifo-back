@@ -35,7 +35,7 @@ public class DispositivoService {
 	private final TipoDispositivoService tipoDispositivoService;
 
 	public DispositivoDTO findById(Long id) {
-		return dispositivoToDispositivoDTO(validateId(id));
+		return dispositivoToDispositivoDTO(findModelById(id));
 	}
 
 	public List<DispositivoDTO> findAll() {
@@ -54,7 +54,7 @@ public class DispositivoService {
 	}
 
 	public DispositivoDTO update(DispositivoUpdateDTO dispositivoUpdateDTO) {
-		Dispositivo dispositivo = validateId(dispositivoUpdateDTO.getId());
+		Dispositivo dispositivo = findModelById(dispositivoUpdateDTO.getId());
 
 		if(dispositivoUpdateDTO.getNome() != null &&
 				!dispositivoUpdateDTO.getNome().equals(dispositivo.getNome()) &&
@@ -66,12 +66,12 @@ public class DispositivoService {
 	}
 
 	public void deleteById(Long id) {
-		validateId(id);
+		findModelById(id);
 		dispositivoRepository.deleteById(id);
 	}
 
 	public DispositivoDTO addTipoDispositivo(Long dispositivoId, Long tipoDispositivoId) {
-		Dispositivo dispositivo = validateId(dispositivoId);
+		Dispositivo dispositivo = findModelById(dispositivoId);
 		TipoDispositivoDTO tipoDispositivoDTO = tipoDispositivoService.findById(tipoDispositivoId);
 
 		if(dispositivo.getTipoDispositivoList().stream().anyMatch(tipoDispositivo -> tipoDispositivo.getId().equals(tipoDispositivoId)))
@@ -82,8 +82,8 @@ public class DispositivoService {
 	}
 
 	public DispositivoDTO removeTipoDispositivo(Long dispositivoId, Long tipoDispositivoId) {
-		Dispositivo dispositivo = validateId(dispositivoId);
-		tipoDispositivoService.validateId(tipoDispositivoId);
+		Dispositivo dispositivo = findModelById(dispositivoId);
+		tipoDispositivoService.findModelById(tipoDispositivoId);
 
 		if (!dispositivo.getTipoDispositivoList().removeIf(tipoDispositivo -> tipoDispositivo.getId().equals(tipoDispositivoId)))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_TIPO_NAO_ENCONTRADO);
@@ -91,7 +91,7 @@ public class DispositivoService {
 		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
 	}
 
-	Dispositivo validateId(Long id) {
+	Dispositivo findModelById(Long id) {
 		return dispositivoRepository.findById(id).orElseThrow(
 				() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
 		);
@@ -111,12 +111,12 @@ public class DispositivoService {
 	Dispositivo dispositivoDTOToDispositivo(DispositivoDTO dispositivoDTO){
 		Dispositivo dispositivo = modelMapper.map(dispositivoDTO, Dispositivo.class);
 		if(dispositivoDTO.getAtualId() != null)
-			dispositivo.setAtual(nodeService.validateId(dispositivoDTO.getAtualId()));
+			dispositivo.setAtual(nodeService.findModelById(dispositivoDTO.getAtualId()));
 		if(dispositivoDTO.getFilaId() != null)
-			dispositivo.setFila(nodeService.validateId(dispositivoDTO.getFilaId()));
+			dispositivo.setFila(nodeService.findModelById(dispositivoDTO.getFilaId()));
 		if(dispositivoDTO.getTipoDispositivoIdList() != null)
 			dispositivo.setTipoDispositivoList(dispositivoDTO.getTipoDispositivoIdList().stream()
-					.map(tipoDispositivoService::validateId)
+					.map(tipoDispositivoService::findModelById)
 					.collect(Collectors.toList()));
 
 		return dispositivo;

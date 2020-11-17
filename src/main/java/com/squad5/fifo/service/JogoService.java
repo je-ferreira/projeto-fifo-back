@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.squad5.fifo.dto.TipoDispositivoDTO;
 import com.squad5.fifo.model.TipoDispositivo;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -35,7 +34,7 @@ public class JogoService {
 	
 	//CRUD
 	public JogoDTO findById(Long id) {
-		return jogoToJogoDTO(validateId(id));
+		return jogoToJogoDTO(findModelById(id));
 	}
 	
 	public List<JogoDTO> findAll() {
@@ -54,7 +53,7 @@ public class JogoService {
 	}
 	
 	public JogoDTO update(JogoUpdateDTO jogoUpdateDTO) {
-		Jogo jogo = validateId(jogoUpdateDTO.getId());
+		Jogo jogo = findModelById(jogoUpdateDTO.getId());
 
 		if(jogoUpdateDTO.getNome() != null &&
 				!jogoUpdateDTO.getNome().equals(jogo.getNome()) &&
@@ -66,25 +65,25 @@ public class JogoService {
 	}
 	
 	public void deleteById(Long id) {
-		validateId(id);
+		findModelById(id);
 		jogoRepository.deleteById(id);
 	}
 	
 	//TipoDispositivo
 	public JogoDTO addTipoDispositivo(Long jogoId, Long tipoDispositivoId) {
-		Jogo jogo = validateId(jogoId);
-		TipoDispositivoDTO tipoDispositivoDTO = tipoDispositivoService.findById(tipoDispositivoId);
+		Jogo jogo = findModelById(jogoId);
+		TipoDispositivo tipoDispositivo = tipoDispositivoService.findModelById(tipoDispositivoId);
 
-		if(jogo.getTipoDispositivoList().stream().anyMatch(tipoDispositivo -> tipoDispositivo.getId().equals(tipoDispositivoId)))
+		if(jogo.getTipoDispositivoList().stream().anyMatch(tipo -> tipo.getId().equals(tipoDispositivoId)))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_TIPO_JA_CADASTRADO);
 
-		jogo.getTipoDispositivoList().add(tipoDispositivoService.dtoTotipoDispositivo(tipoDispositivoDTO));
+		jogo.getTipoDispositivoList().add(tipoDispositivo);
 		return jogoToJogoDTO(jogoRepository.save(jogo));
 	}
 	
 	public JogoDTO removeTipoDispositivo(Long jogoId, Long tipoDispositivoId) {
-		Jogo jogo = validateId(jogoId);
-		tipoDispositivoService.validateId(tipoDispositivoId);
+		Jogo jogo = findModelById(jogoId);
+		tipoDispositivoService.findModelById(tipoDispositivoId);
 		
 		if (!jogo.getTipoDispositivoList().removeIf(tipoDispositivo -> tipoDispositivo.getId().equals(tipoDispositivoId)))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_TIPO_NAO_ENCONTRADO);
@@ -93,17 +92,17 @@ public class JogoService {
 	}
 
 	//Auxiliary methods
-	private boolean nomeJaCadastrado(String nome) {
+	boolean nomeJaCadastrado(String nome) {
 		return jogoRepository.findByNome(nome).isPresent();
 	}
 	
-	private Jogo validateId(Long id) {
+	Jogo findModelById(Long id) {
 		return jogoRepository.findById(id).orElseThrow(
 				() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
 		);
 	}
 	
-	private JogoDTO jogoToJogoDTO(Jogo jogo) {
+	JogoDTO jogoToJogoDTO(Jogo jogo) {
 		JogoDTO jogoDTO = modelMapper.map(jogo, JogoDTO.class);
 		jogo.getTipoDispositivoList().stream()
 				.map(TipoDispositivo::getId)
@@ -112,11 +111,11 @@ public class JogoService {
 		return jogoDTO;
 	}
 	
-	private Jogo JogoDTOToJogo(JogoDTO jogoDTO) {
+	Jogo JogoDTOToJogo(JogoDTO jogoDTO) {
 		Jogo jogo = modelMapper.map(jogoDTO, Jogo.class);
 		if(jogoDTO.getTipoDispositivoIdList() != null)
 			jogo.setTipoDispositivoList(jogoDTO.getTipoDispositivoIdList().stream()
-					.map(tipoDispositivoService::validateId)
+					.map(tipoDispositivoService::findModelById)
 					.collect(Collectors.toList()));
 
 		return jogo;

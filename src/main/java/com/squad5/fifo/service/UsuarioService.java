@@ -56,9 +56,9 @@ public class UsuarioService {
 
         modelMapper.map(usuarioUpdateDTO, usuario);
         usuario.setCargoUsuario(mergeIdToNull(
-                usuarioUpdateDTO.getCargoUsuario(), null, usuario.getCargoUsuario(), cargoUsuarioService::validateId
+                usuarioUpdateDTO.getCargoUsuario(), null, usuario.getCargoUsuario(), cargoUsuarioService::findModelById
         ));
-        usuario.setNode(mergeIdToNull(usuarioUpdateDTO.getNode(), 0L, usuario.getNode(), nodeService::validateId));
+        usuario.setNode(mergeIdToNull(usuarioUpdateDTO.getNode(), 0L, usuario.getNode(), nodeService::findModelById));
 
         return usuarioToUsuarioDTO(usuarioRepository.save(usuario));
     }
@@ -83,9 +83,9 @@ public class UsuarioService {
 
     Usuario usuarioDTOToUsuario(UsuarioDTO usuarioDTO){
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
-        usuario.setCargoUsuario(cargoUsuarioService.validateId(usuarioDTO.getCargoUsuario()));
+        usuario.setCargoUsuario(cargoUsuarioService.findModelById(usuarioDTO.getCargoUsuario()));
         if(usuarioDTO.getNode() != null)
-            usuario.setNode(nodeService.validateId(usuarioDTO.getNode()));
+            usuario.setNode(nodeService.findModelById(usuarioDTO.getNode()));
 
         return usuario;
     }

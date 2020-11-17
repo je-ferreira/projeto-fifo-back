@@ -14,7 +14,7 @@ public class CargoUsuarioService {
 
     private final CargoUsuarioRepository cargoUsuarioRepository;
 
-    CargoUsuario validateId(Long id) {
+    CargoUsuario findModelById(Long id) {
         return cargoUsuarioRepository.findById(id).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
         );

@@ -29,7 +29,7 @@ public class TipoDispositivoService {
 	
 	//CRUD
 	public TipoDispositivoDTO findById(Long id) {
-		return tipoDispositivoToDTO(validateId(id));
+		return tipoDispositivoToDTO(findModelById(id));
 	}
 	
 	public List<TipoDispositivoDTO> findAll() {
@@ -47,7 +47,7 @@ public class TipoDispositivoService {
 	}
 	
 	public TipoDispositivoDTO update(TipoDispositivoUpdateDTO tipoDispositivoUpdateDTO) {
-		TipoDispositivo tipoDispositivo = validateId(tipoDispositivoUpdateDTO.getId());
+		TipoDispositivo tipoDispositivo = findModelById(tipoDispositivoUpdateDTO.getId());
 
 		if(tipoDispositivoUpdateDTO.getNome() != null &&
 				!tipoDispositivoUpdateDTO.getNome().equals(tipoDispositivo.getNome()) &&
@@ -59,7 +59,7 @@ public class TipoDispositivoService {
 	}
 	
 	public void deleteById(Long id) {
-		validateId(id);
+		findModelById(id);
 		tipoDispositivoRepository.deleteById(id);
 	}
 	
@@ -68,7 +68,7 @@ public class TipoDispositivoService {
 		return tipoDispositivoRepository.findByNome(nome).isPresent();
 	}
 	
-	TipoDispositivo validateId(Long id) {
+	TipoDispositivo findModelById(Long id) {
 		return tipoDispositivoRepository.findById(id).orElseThrow(
 				() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
 		);
