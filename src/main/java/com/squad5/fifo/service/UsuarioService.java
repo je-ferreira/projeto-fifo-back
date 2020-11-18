@@ -30,7 +30,7 @@ public class UsuarioService {
     private final NodeService nodeService;
 
     public UsuarioDTO findById(Long id) {
-        return usuarioToUsuarioDTO(validateId(id));
+        return usuarioToUsuarioDTO(findModelById(id));
     }
 
     public List<UsuarioDTO> findAll() {
@@ -48,7 +48,7 @@ public class UsuarioService {
     }
 
     public UsuarioDTO update(UsuarioUpdateDTO usuarioUpdateDTO) {
-        Usuario usuario = validateId(usuarioUpdateDTO.getId());
+        Usuario usuario = findModelById(usuarioUpdateDTO.getId());
         if(usuarioUpdateDTO.getEmail() != null &&
                 !usuarioUpdateDTO.getEmail().equals(usuario.getEmail()) &&
                 usuarioRepository.findByEmail(usuarioUpdateDTO.getEmail()).isPresent())
@@ -64,11 +64,11 @@ public class UsuarioService {
     }
 
     public void deleteById(Long id) {
-        validateId(id);
+        findModelById(id);
         usuarioRepository.deleteById(id);
     }
 
-    Usuario validateId(Long id) {
+    Usuario findModelById(Long id) {
         return usuarioRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
         );

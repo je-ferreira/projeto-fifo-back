@@ -20,7 +20,7 @@ public class Jogo {
 	
 	private Boolean ativo;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	private List<TipoDispositivo> tipoDispositivoList;
 
 }

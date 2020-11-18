@@ -72,12 +72,12 @@ public class DispositivoService {
 
 	public DispositivoDTO addTipoDispositivo(Long dispositivoId, Long tipoDispositivoId) {
 		Dispositivo dispositivo = findModelById(dispositivoId);
-		TipoDispositivoDTO tipoDispositivoDTO = tipoDispositivoService.findById(tipoDispositivoId);
+		TipoDispositivo tipoDispositivo = tipoDispositivoService.findModelById(tipoDispositivoId);
 
-		if(dispositivo.getTipoDispositivoList().stream().anyMatch(tipoDispositivo -> tipoDispositivo.getId().equals(tipoDispositivoId)))
+		if(dispositivo.getTipoDispositivoList().stream().anyMatch(tipo -> tipo.getId().equals(tipoDispositivoId)))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_TIPO_JA_CADASTRADO);
 
-		dispositivo.getTipoDispositivoList().add(tipoDispositivoService.dtoTotipoDispositivo(tipoDispositivoDTO));
+		dispositivo.getTipoDispositivoList().add(tipoDispositivo);
 		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
 	}
 
@@ -101,6 +101,7 @@ public class DispositivoService {
 		DispositivoDTO dispositivoDTO = modelMapper.map(dispositivo, DispositivoDTO.class);
 		dispositivoDTO.setAtualId(dispositivo.getAtual() == null ? null : dispositivo.getAtual().getId());
 		dispositivoDTO.setFilaId(dispositivo.getFila() == null ? null : dispositivo.getFila().getId());
+		dispositivoDTO.setTipoDispositivoIdList(new ArrayList<>());
 		dispositivo.getTipoDispositivoList().stream()
 				.map(TipoDispositivo::getId)
 				.forEach(dispositivoDTO.getTipoDispositivoIdList()::add);

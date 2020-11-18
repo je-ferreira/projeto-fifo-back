@@ -27,7 +27,7 @@ public class Dispositivo {
 	@ManyToOne
 	private Node atual;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	private List<TipoDispositivo> tipoDispositivoList;
 	
 }

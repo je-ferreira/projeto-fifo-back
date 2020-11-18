@@ -104,6 +104,7 @@ public class JogoService {
 	
 	JogoDTO jogoToJogoDTO(Jogo jogo) {
 		JogoDTO jogoDTO = modelMapper.map(jogo, JogoDTO.class);
+		jogoDTO.setTipoDispositivoIdList(new ArrayList<>());
 		jogo.getTipoDispositivoList().stream()
 				.map(TipoDispositivo::getId)
 				.forEach(jogoDTO.getTipoDispositivoIdList()::add);
