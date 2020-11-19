@@ -3,6 +3,7 @@ package com.squad5.fifo.service;
 import com.squad5.fifo.dto.UsuarioDTO;
 import com.squad5.fifo.dto.UsuarioInsertDTO;
 import com.squad5.fifo.dto.UsuarioUpdateDTO;
+import com.squad5.fifo.model.CargoUsuario;
 import com.squad5.fifo.model.Usuario;
 import com.squad5.fifo.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,6 @@ public class UsuarioService {
 
     private final ModelMapper modelMapper;
 
-    private final CargoUsuarioService cargoUsuarioService;
-
     private final NodeService nodeService;
 
     public UsuarioDTO findById(Long id) {
@@ -44,6 +43,7 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_EMAIL_JA_CADASTRADO);
 
         Usuario usuario = usuarioDTOToUsuario(usuarioInsertDTO);
+        usuario.setCargoUsuario(CargoUsuario.USER);
         return usuarioToUsuarioDTO(usuarioRepository.save(usuario));
     }
 
@@ -55,9 +55,6 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_EMAIL_JA_CADASTRADO);
 
         modelMapper.map(usuarioUpdateDTO, usuario);
-        usuario.setCargoUsuario(mergeIdToNull(
-                usuarioUpdateDTO.getCargoUsuario(), null, usuario.getCargoUsuario(), cargoUsuarioService::findModelById
-        ));
         usuario.setNode(mergeIdToNull(usuarioUpdateDTO.getNode(), 0L, usuario.getNode(), nodeService::findModelById));
 
         return usuarioToUsuarioDTO(usuarioRepository.save(usuario));
@@ -76,14 +73,12 @@ public class UsuarioService {
 
     UsuarioDTO usuarioToUsuarioDTO(Usuario usuario){
         UsuarioDTO usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
-        usuarioDTO.setCargoUsuario(usuario.getCargoUsuario().getId());
         usuarioDTO.setNode(usuario.getNode() == null ? null : usuario.getNode().getId());
         return usuarioDTO;
     }
 
     Usuario usuarioDTOToUsuario(UsuarioDTO usuarioDTO){
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
-        usuario.setCargoUsuario(cargoUsuarioService.findModelById(usuarioDTO.getCargoUsuario()));
         if(usuarioDTO.getNode() != null)
             usuario.setNode(nodeService.findModelById(usuarioDTO.getNode()));
 

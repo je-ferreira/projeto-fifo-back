@@ -2,10 +2,7 @@ package com.squad5.fifo.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity @Data
 public class Metodo {
@@ -16,7 +13,8 @@ public class Metodo {
 
 	private String estado;
 
-	@ManyToOne(optional = false)
+	@Column(nullable = false)
+	@Enumerated(EnumType.ORDINAL)
 	private TipoMetodo tipoMetodo;
 
 }

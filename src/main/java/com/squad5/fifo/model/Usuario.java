@@ -22,7 +22,8 @@ public class Usuario {
     @Column(nullable = false)
     private Boolean ativo;
 
-    @ManyToOne(optional = false)
+    @Column(nullable = false)
+    @Enumerated(EnumType.ORDINAL)
     private CargoUsuario cargoUsuario;
 
     @ManyToOne

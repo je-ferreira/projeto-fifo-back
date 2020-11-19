@@ -1,6 +1,7 @@
 package com.squad5.fifo.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.squad5.fifo.model.CargoUsuario;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -21,7 +22,7 @@ public class UsuarioInsertDTO extends UsuarioDTO{
     @NotNull
     private Boolean ativo;
 
-    @NotNull
-    private Long cargoUsuario;
+    @JsonIgnore
+    private CargoUsuario cargoUsuario;
 
 }
