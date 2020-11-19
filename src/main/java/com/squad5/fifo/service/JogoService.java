@@ -122,4 +122,8 @@ public class JogoService {
 		return jogo;
 	}
 
+    List<Jogo> findAtivos() {
+		return jogoRepository.findByAtivo(true);
+    }
+
 }
