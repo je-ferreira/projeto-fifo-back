@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import com.squad5.fifo.dto.DispositivoInsertDTO;
 import com.squad5.fifo.dto.DispositivoUpdateDTO;
-import com.squad5.fifo.dto.TipoDispositivoDTO;
 import com.squad5.fifo.model.TipoDispositivo;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -123,4 +122,7 @@ public class DispositivoService {
 		return dispositivo;
 	}
 
+	List<Dispositivo> findAtivosSendoJogados() {
+		return dispositivoRepository.findByAtivoAndAtualNotNull(true);
+	}
 }
