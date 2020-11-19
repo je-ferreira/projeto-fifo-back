@@ -1,6 +1,8 @@
 package com.squad5.fifo.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.squad5.fifo.infra.NullOrNotBlank;
+import com.squad5.fifo.model.CargoUsuario;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -16,5 +18,8 @@ public class UsuarioUpdateDTO extends UsuarioDTO{
 
     @NullOrNotBlank
     private String nome;
+
+    @JsonIgnore
+    private CargoUsuario cargoUsuario;
 
 }

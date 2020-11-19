@@ -1,5 +1,6 @@
 package com.squad5.fifo.dto;
 
+import com.squad5.fifo.model.CargoUsuario;
 import lombok.Data;
 
 @Data
@@ -13,7 +14,7 @@ public class UsuarioDTO {
 
     private Boolean ativo;
 
-    private Long cargoUsuario;
+    private CargoUsuario cargoUsuario;
 
     private Long node;
 
