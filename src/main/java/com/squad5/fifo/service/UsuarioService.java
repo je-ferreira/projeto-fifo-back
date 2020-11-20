@@ -85,6 +85,10 @@ public class UsuarioService {
         return usuario;
     }
 
+    List<Usuario> findAllByNodeId(Long id) {
+        return usuarioRepository.findByNodeId(id);
+    }
+
     private <T, U> T mergeIdToNull(U id, U nullCase, T atual, Function<U, T> finder){
         if(id == null) return atual;
         if(id.equals(nullCase)) return null;
