@@ -1,11 +1,13 @@
 package com.squad5.fifo.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity @Data
+@Builder
 public class Node {
 
 	@Id

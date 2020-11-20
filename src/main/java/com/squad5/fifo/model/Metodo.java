@@ -1,10 +1,12 @@
 package com.squad5.fifo.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity @Data
+@Builder
 public class Metodo {
 
 	@Id

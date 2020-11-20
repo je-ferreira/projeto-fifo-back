@@ -1,5 +1,6 @@
 package com.squad5.fifo.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity @Data
+@Builder
 public class HisNode {
 
 	@Id
