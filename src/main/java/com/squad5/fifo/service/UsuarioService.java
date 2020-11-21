@@ -37,6 +37,11 @@ public class UsuarioService {
                 .map(this::usuarioToUsuarioDTO)
                 .collect(Collectors.toList());
     }
+    
+    public List<UsuarioDTO> findDisponiveis() {
+    	return usuarioRepository.findByNodeNullAndAtivo(true)
+    			.stream().map(this::usuarioToUsuarioDTO).collect(Collectors.toList());
+    }
 
     public UsuarioDTO insert(UsuarioInsertDTO usuarioInsertDTO) {
         if(usuarioRepository.findByEmail(usuarioInsertDTO.getEmail()).isPresent())

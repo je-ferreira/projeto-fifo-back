@@ -13,5 +13,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByEmail(String email);
 
     List<Usuario> findByNodeId(Long id);
-
+    
+    List<Usuario> findByNodeNullAndAtivo(Boolean ativo);
 }

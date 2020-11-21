@@ -25,6 +25,11 @@ public class UsuarioController {
     public List<UsuarioDTO> getAll() {
         return usuarioService.findAll();
     }
+    
+    @GetMapping("/disponiveis")
+    public List<UsuarioDTO> getDisponiveis() {
+    	return usuarioService.findDisponiveis();
+    }
 
     @PostMapping
     public UsuarioDTO post(@RequestBody @Valid UsuarioInsertDTO usuarioInsertDTO) {
