@@ -50,4 +50,5 @@ public class TipoDispositivoController {
 	public void delete(@PathVariable Long id) {
 		tipoDispositivoService.deleteById(id);
 	}
+
 }

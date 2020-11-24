@@ -21,12 +21,6 @@ public class Dispositivo {
 	@Column(nullable = false)
 	private Boolean ativo;
 
-	@ManyToOne
-	private Node fila;
-
-	@ManyToOne
-	private Node atual;
-
 	@ManyToMany
 	private List<TipoDispositivo> tipoDispositivoList;
 	

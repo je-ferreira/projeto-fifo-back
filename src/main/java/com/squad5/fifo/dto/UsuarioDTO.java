@@ -16,6 +16,6 @@ public class UsuarioDTO {
 
     private CargoUsuario cargoUsuario;
 
-    private Long node;
+    private Long vez;
 
 }

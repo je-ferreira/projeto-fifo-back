@@ -29,7 +29,7 @@ public class DispositivoService {
 
 	private final ModelMapper modelMapper;
 
-	private final NodeService nodeService;
+	private final VezService vezService;
 
 	private final TipoDispositivoService tipoDispositivoService;
 
@@ -98,8 +98,6 @@ public class DispositivoService {
 
 	DispositivoDTO dispositivoToDispositivoDTO(Dispositivo dispositivo){
 		DispositivoDTO dispositivoDTO = modelMapper.map(dispositivo, DispositivoDTO.class);
-		dispositivoDTO.setAtualId(dispositivo.getAtual() == null ? null : dispositivo.getAtual().getId());
-		dispositivoDTO.setFilaId(dispositivo.getFila() == null ? null : dispositivo.getFila().getId());
 		dispositivoDTO.setTipoDispositivoIdList(new ArrayList<>());
 		dispositivo.getTipoDispositivoList().stream()
 				.map(TipoDispositivo::getId)
@@ -110,10 +108,6 @@ public class DispositivoService {
 
 	Dispositivo dispositivoDTOToDispositivo(DispositivoDTO dispositivoDTO){
 		Dispositivo dispositivo = modelMapper.map(dispositivoDTO, Dispositivo.class);
-		if(dispositivoDTO.getAtualId() != null)
-			dispositivo.setAtual(nodeService.findModelById(dispositivoDTO.getAtualId()));
-		if(dispositivoDTO.getFilaId() != null)
-			dispositivo.setFila(nodeService.findModelById(dispositivoDTO.getFilaId()));
 		if(dispositivoDTO.getTipoDispositivoIdList() != null)
 			dispositivo.setTipoDispositivoList(dispositivoDTO.getTipoDispositivoIdList().stream()
 					.map(tipoDispositivoService::findModelById)
@@ -122,7 +116,4 @@ public class DispositivoService {
 		return dispositivo;
 	}
 
-	List<Dispositivo> findAtivosSendoJogados() {
-		return dispositivoRepository.findByAtivoAndAtualNotNull(true);
-	}
 }
