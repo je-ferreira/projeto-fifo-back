@@ -15,4 +15,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     List<Usuario> findByNodeId(Long id);
     
     List<Usuario> findByNodeNullAndAtivo(Boolean ativo);
+
 }

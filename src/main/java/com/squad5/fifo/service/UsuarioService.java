@@ -39,8 +39,9 @@ public class UsuarioService {
     }
     
     public List<UsuarioDTO> findDisponiveis() {
-    	return usuarioRepository.findByNodeNullAndAtivo(true)
-    			.stream().map(this::usuarioToUsuarioDTO).collect(Collectors.toList());
+    	return usuarioRepository.findByNodeNullAndAtivo(true).stream()
+                .map(this::usuarioToUsuarioDTO)
+                .collect(Collectors.toList());
     }
 
     public UsuarioDTO insert(UsuarioInsertDTO usuarioInsertDTO) {
