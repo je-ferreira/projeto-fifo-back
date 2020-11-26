@@ -13,10 +13,6 @@ public class DispositivoDTO{
 
     private Boolean ativo;
 
-    private Long filaId;
-
-    private Long atualId;
-
     private List<Long> tipoDispositivoIdList;
 
 }

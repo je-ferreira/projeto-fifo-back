@@ -27,6 +27,6 @@ public class Usuario {
     private CargoUsuario cargoUsuario;
 
     @ManyToOne
-    private Node node;
+    private Vez vez;
 
 }

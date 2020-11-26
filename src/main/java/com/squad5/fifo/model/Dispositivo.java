@@ -21,13 +21,7 @@ public class Dispositivo {
 	@Column(nullable = false)
 	private Boolean ativo;
 
-	@ManyToOne
-	private Node fila;
-
-	@ManyToOne
-	private Node atual;
-
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<TipoDispositivo> tipoDispositivoList;
 	
 }

@@ -2,7 +2,6 @@ package com.squad5.fifo.service;
 
 import com.squad5.fifo.dto.HomePartidaAtualDTO;
 import com.squad5.fifo.dto.JogoDTO;
-import com.squad5.fifo.model.Partida;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,20 +13,18 @@ public class HomeService {
 
     private final JogoService jogoService;
 
-    private final DispositivoService dispositivoService;
-
-    private final PartidaService partidaService;
+    private final VezService vezService;
 
     public List<HomePartidaAtualDTO> findPartidasAtuais() {
-        return dispositivoService.findAtivosSendoJogados().stream()
-                .map(dispositivo -> {
-                    Partida partida = partidaService.getPartidaByNode(dispositivo.getAtual().getId());
-                    return HomePartidaAtualDTO.builder()
-                            .nomeDispositivo(dispositivo.getNome())
-                            .idPartida(partida.getId())
-                            .idJogo(partida.getJogo().getId())
-                            .build();
-                }).collect(Collectors.toList());
+        return vezService.findParticipacoesAtuais().stream()
+                .map(vez -> HomePartidaAtualDTO.builder()
+                        .idVez(vez.getId())
+                        .nomeDispositivo(vez.getDispositivo().getNome())
+                        .idDispositivo(vez.getDispositivo().getId())
+                        .idJogo(vez.getJogo().getId())
+                        .nomeJogo(vez.getJogo().getNome())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public List<JogoDTO> findJogosAtivos() {

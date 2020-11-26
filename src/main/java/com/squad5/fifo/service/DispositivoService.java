@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.squad5.fifo.dto.DispositivoInsertDTO;
 import com.squad5.fifo.dto.DispositivoUpdateDTO;
+import com.squad5.fifo.model.Jogo;
 import com.squad5.fifo.model.TipoDispositivo;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,12 +25,13 @@ public class DispositivoService {
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um dispositivo com o nome fornecido.";
 	private static final String MSG_ID_TIPO_NAO_ENCONTRADO = "Não há nenhum tipo de dispositivo com esse id vinculado ao dispositivo.";
 	private static final String MSG_TIPO_JA_CADASTRADO = "O tipo de dispositivo informado já está relacionado ao dispositivo em questão.";
+	private static final String MSG_DISPOSITIVO_TIPO_NAO_EXISTE = "Não há um dispositivo com o tipo informado.";
 
 	private final DispositivoRepository dispositivoRepository;
 
 	private final ModelMapper modelMapper;
 
-	private final NodeService nodeService;
+	private final VezService vezService;
 
 	private final TipoDispositivoService tipoDispositivoService;
 
@@ -98,8 +100,6 @@ public class DispositivoService {
 
 	DispositivoDTO dispositivoToDispositivoDTO(Dispositivo dispositivo){
 		DispositivoDTO dispositivoDTO = modelMapper.map(dispositivo, DispositivoDTO.class);
-		dispositivoDTO.setAtualId(dispositivo.getAtual() == null ? null : dispositivo.getAtual().getId());
-		dispositivoDTO.setFilaId(dispositivo.getFila() == null ? null : dispositivo.getFila().getId());
 		dispositivoDTO.setTipoDispositivoIdList(new ArrayList<>());
 		dispositivo.getTipoDispositivoList().stream()
 				.map(TipoDispositivo::getId)
@@ -110,10 +110,6 @@ public class DispositivoService {
 
 	Dispositivo dispositivoDTOToDispositivo(DispositivoDTO dispositivoDTO){
 		Dispositivo dispositivo = modelMapper.map(dispositivoDTO, Dispositivo.class);
-		if(dispositivoDTO.getAtualId() != null)
-			dispositivo.setAtual(nodeService.findModelById(dispositivoDTO.getAtualId()));
-		if(dispositivoDTO.getFilaId() != null)
-			dispositivo.setFila(nodeService.findModelById(dispositivoDTO.getFilaId()));
 		if(dispositivoDTO.getTipoDispositivoIdList() != null)
 			dispositivo.setTipoDispositivoList(dispositivoDTO.getTipoDispositivoIdList().stream()
 					.map(tipoDispositivoService::findModelById)
@@ -122,7 +118,10 @@ public class DispositivoService {
 		return dispositivo;
 	}
 
-	List<Dispositivo> findAtivosSendoJogados() {
-		return dispositivoRepository.findByAtivoAndAtualNotNull(true);
+	public Dispositivo findFirstByTipoDispositivo(Jogo jogo) {
+		return dispositivoRepository.findByTipoDispositivo(jogo).orElseThrow(
+				() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_DISPOSITIVO_TIPO_NAO_EXISTE)
+		);
 	}
+
 }

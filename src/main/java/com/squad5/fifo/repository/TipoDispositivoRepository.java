@@ -9,4 +9,5 @@ import com.squad5.fifo.model.TipoDispositivo;
 public interface TipoDispositivoRepository extends JpaRepository<TipoDispositivo, Long> {
 
 	Optional<TipoDispositivo> findByNome(String nome);
+
 }

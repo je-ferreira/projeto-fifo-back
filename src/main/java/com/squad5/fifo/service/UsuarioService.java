@@ -5,8 +5,11 @@ import com.squad5.fifo.dto.UsuarioInsertDTO;
 import com.squad5.fifo.dto.UsuarioUpdateDTO;
 import com.squad5.fifo.model.CargoUsuario;
 import com.squad5.fifo.model.Usuario;
+import com.squad5.fifo.model.Vez;
 import com.squad5.fifo.repository.UsuarioRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,7 +29,8 @@ public class UsuarioService {
 
     private final ModelMapper modelMapper;
 
-    private final NodeService nodeService;
+    @Setter(AccessLevel.PACKAGE)
+    private VezService vezService;
 
     public UsuarioDTO findById(Long id) {
         return usuarioToUsuarioDTO(findModelById(id));
@@ -39,7 +43,7 @@ public class UsuarioService {
     }
     
     public List<UsuarioDTO> findDisponiveis() {
-    	return usuarioRepository.findByNodeNullAndAtivo(true).stream()
+    	return usuarioRepository.findByVezNullAndAtivo(true).stream()
                 .map(this::usuarioToUsuarioDTO)
                 .collect(Collectors.toList());
     }
@@ -47,7 +51,6 @@ public class UsuarioService {
     public UsuarioDTO insert(UsuarioInsertDTO usuarioInsertDTO) {
         if(usuarioRepository.findByEmail(usuarioInsertDTO.getEmail()).isPresent())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_EMAIL_JA_CADASTRADO);
-
         Usuario usuario = usuarioDTOToUsuario(usuarioInsertDTO);
         usuario.setCargoUsuario(CargoUsuario.USER);
         return usuarioToUsuarioDTO(usuarioRepository.save(usuario));
@@ -61,7 +64,7 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_EMAIL_JA_CADASTRADO);
 
         modelMapper.map(usuarioUpdateDTO, usuario);
-        usuario.setNode(mergeIdToNull(usuarioUpdateDTO.getNode(), 0L, usuario.getNode(), nodeService::findModelById));
+        usuario.setVez(mergeIdToNull(usuarioUpdateDTO.getVez(), 0L, usuario.getVez(), vezService::findModelById));
 
         return usuarioToUsuarioDTO(usuarioRepository.save(usuario));
     }
@@ -79,20 +82,20 @@ public class UsuarioService {
 
     UsuarioDTO usuarioToUsuarioDTO(Usuario usuario){
         UsuarioDTO usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
-        usuarioDTO.setNode(usuario.getNode() == null ? null : usuario.getNode().getId());
+        usuarioDTO.setVez(usuario.getVez() == null ? null : usuario.getVez().getId());
         return usuarioDTO;
     }
 
     Usuario usuarioDTOToUsuario(UsuarioDTO usuarioDTO){
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
-        if(usuarioDTO.getNode() != null)
-            usuario.setNode(nodeService.findModelById(usuarioDTO.getNode()));
+        if(usuarioDTO.getVez() != null)
+            usuario.setVez(vezService.findModelById(usuarioDTO.getVez()));
 
         return usuario;
     }
 
-    List<Usuario> findAllByNodeId(Long id) {
-        return usuarioRepository.findByNodeId(id);
+    List<Usuario> findByVez(Vez vez) {
+        return usuarioRepository.findByVez(vez);
     }
 
     private <T, U> T mergeIdToNull(U id, U nullCase, T atual, Function<U, T> finder){
