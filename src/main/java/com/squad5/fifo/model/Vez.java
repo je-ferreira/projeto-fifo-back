@@ -1,14 +1,16 @@
 package com.squad5.fifo.model;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity @Data
-@Builder
+@Builder @AllArgsConstructor
+@NoArgsConstructor
 public class Vez {
 
 	@Id
@@ -24,7 +26,12 @@ public class Vez {
 	@ManyToOne
 	private Dispositivo dispositivo;
 
-	@ManyToMany
+	@ManyToOne
+	private Usuario convidante;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@Fetch(FetchMode.SUBSELECT)
+	@ToString.Exclude
 	private List<Usuario> usuarioList;
 
 }

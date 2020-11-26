@@ -53,8 +53,4 @@ public class ParticipacaoService {
         participacaoRepository.deleteById(findModelById(vezId, usuarioId).getId());
     }
 
-    List<Participacao> findParticipacoesAtuais() {
-        return participacaoRepository.findByResultadoNull();
-    }
-
 }

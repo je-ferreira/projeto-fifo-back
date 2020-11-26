@@ -21,7 +21,7 @@ public class Dispositivo {
 	@Column(nullable = false)
 	private Boolean ativo;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<TipoDispositivo> tipoDispositivoList;
 	
 }

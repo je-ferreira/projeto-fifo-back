@@ -2,11 +2,9 @@ package com.squad5.fifo.service;
 
 import com.squad5.fifo.dto.HomePartidaAtualDTO;
 import com.squad5.fifo.dto.JogoDTO;
-import com.squad5.fifo.model.Participacao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,20 +13,18 @@ public class HomeService {
 
     private final JogoService jogoService;
 
-    private final ParticipacaoService participacaoService;
+    private final VezService vezService;
 
     public List<HomePartidaAtualDTO> findPartidasAtuais() {
-        List<HomePartidaAtualDTO> homePartidaAtualDTOList = new ArrayList<>();
-        for(Participacao participacao : participacaoService.findParticipacoesAtuais()){
-            if(homePartidaAtualDTOList.stream().noneMatch(homePartidaAtualDTO -> homePartidaAtualDTO.getIdVez().equals(participacao.getVez().getId())))
-                homePartidaAtualDTOList.add(HomePartidaAtualDTO.builder()
-                        .idVez(participacao.getVez().getId())
-                        .nomeDispositivo(participacao.getVez().getDispositivo().getNome())
-                        .idJogo(participacao.getVez().getJogo().getId())
-                        .nomeJogo(participacao.getVez().getJogo().getNome())
-                        .build());
-        }
-        return homePartidaAtualDTOList;
+        return vezService.findParticipacoesAtuais().stream()
+                .map(vez -> HomePartidaAtualDTO.builder()
+                        .idVez(vez.getId())
+                        .nomeDispositivo(vez.getDispositivo().getNome())
+                        .idDispositivo(vez.getDispositivo().getId())
+                        .idJogo(vez.getJogo().getId())
+                        .nomeJogo(vez.getJogo().getNome())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public List<JogoDTO> findJogosAtivos() {

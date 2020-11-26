@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.squad5.fifo.dto.DispositivoInsertDTO;
 import com.squad5.fifo.dto.DispositivoUpdateDTO;
+import com.squad5.fifo.model.Jogo;
 import com.squad5.fifo.model.TipoDispositivo;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,6 +25,7 @@ public class DispositivoService {
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um dispositivo com o nome fornecido.";
 	private static final String MSG_ID_TIPO_NAO_ENCONTRADO = "Não há nenhum tipo de dispositivo com esse id vinculado ao dispositivo.";
 	private static final String MSG_TIPO_JA_CADASTRADO = "O tipo de dispositivo informado já está relacionado ao dispositivo em questão.";
+	private static final String MSG_DISPOSITIVO_TIPO_NAO_EXISTE = "Não há um dispositivo com o tipo informado.";
 
 	private final DispositivoRepository dispositivoRepository;
 
@@ -114,6 +116,12 @@ public class DispositivoService {
 					.collect(Collectors.toList()));
 
 		return dispositivo;
+	}
+
+	public Dispositivo findFirstByTipoDispositivo(Jogo jogo) {
+		return dispositivoRepository.findByTipoDispositivo(jogo).orElseThrow(
+				() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_DISPOSITIVO_TIPO_NAO_EXISTE)
+		);
 	}
 
 }

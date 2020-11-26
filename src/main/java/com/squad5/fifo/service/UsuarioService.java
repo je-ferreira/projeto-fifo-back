@@ -5,8 +5,11 @@ import com.squad5.fifo.dto.UsuarioInsertDTO;
 import com.squad5.fifo.dto.UsuarioUpdateDTO;
 import com.squad5.fifo.model.CargoUsuario;
 import com.squad5.fifo.model.Usuario;
+import com.squad5.fifo.model.Vez;
 import com.squad5.fifo.repository.UsuarioRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,7 +29,8 @@ public class UsuarioService {
 
     private final ModelMapper modelMapper;
 
-    private final VezService vezService;
+    @Setter(AccessLevel.PACKAGE)
+    private VezService vezService;
 
     public UsuarioDTO findById(Long id) {
         return usuarioToUsuarioDTO(findModelById(id));
@@ -47,7 +51,6 @@ public class UsuarioService {
     public UsuarioDTO insert(UsuarioInsertDTO usuarioInsertDTO) {
         if(usuarioRepository.findByEmail(usuarioInsertDTO.getEmail()).isPresent())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_EMAIL_JA_CADASTRADO);
-
         Usuario usuario = usuarioDTOToUsuario(usuarioInsertDTO);
         usuario.setCargoUsuario(CargoUsuario.USER);
         return usuarioToUsuarioDTO(usuarioRepository.save(usuario));
@@ -89,6 +92,10 @@ public class UsuarioService {
             usuario.setVez(vezService.findModelById(usuarioDTO.getVez()));
 
         return usuario;
+    }
+
+    List<Usuario> findByVez(Vez vez) {
+        return usuarioRepository.findByVez(vez);
     }
 
     private <T, U> T mergeIdToNull(U id, U nullCase, T atual, Function<U, T> finder){

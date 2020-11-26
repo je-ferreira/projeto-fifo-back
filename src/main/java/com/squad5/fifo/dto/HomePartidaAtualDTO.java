@@ -14,4 +14,6 @@ public class HomePartidaAtualDTO {
 
     private String nomeDispositivo;
 
+    private Long idDispositivo;
+
 }
