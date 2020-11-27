@@ -31,8 +31,6 @@ public class DispositivoService {
 
 	private final ModelMapper modelMapper;
 
-	private final VezService vezService;
-
 	private final TipoDispositivoService tipoDispositivoService;
 
 	public DispositivoDTO findById(Long id) {

@@ -2,8 +2,7 @@ package com.squad5.fifo.service;
 
 import com.squad5.fifo.dto.HomePartidaAtualDTO;
 import com.squad5.fifo.dto.JogoDTO;
-import com.squad5.fifo.model.Usuario;
-import com.squad5.fifo.model.Vez;
+import com.squad5.fifo.model.Dispositivo;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,8 @@ public class HomeService {
     private final VezService vezService;
     
     private final DispositivoService dispositivoService;
+
+    private final UsuarioService usuarioService;
 
     public List<HomePartidaAtualDTO> findPartidasAtuais() {
         return vezService.findParticipacoesAtuais().stream()
@@ -38,11 +39,10 @@ public class HomeService {
                 .collect(Collectors.toList());
     }
 
-    public long usuariosNaFila(Long dispositivoId) {
-    	dispositivoService.findModelById(dispositivoId);
-    	
-    	return vezService.findAllModels().stream()
-    			.filter(vez -> vez.getDispositivo().getId() == dispositivoId)
-    			.map(vez -> vez.getUsuarioList()).count();
+    public Long usuariosNaFila(Long dispositivoId) {
+    	Dispositivo dispositivo = dispositivoService.findModelById(dispositivoId);
+
+    	return usuarioService.countByVezDispositivoAndVezEntradaNotNullAndVezSaidaNull(dispositivo);
+    	//return vezService.findAllModels().stream().filter(vez -> vez.getDispositivo().getId() == dispositivoId).map(vez -> vez.getUsuarioList()).count();
     }
 }

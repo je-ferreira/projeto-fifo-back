@@ -12,12 +12,14 @@ public class VezDTO {
 
     private Date entrada;
 
+    private Date saida;
+
     private Long jogo;
 
     private Long dispositivo;
 
     private Long convidante;
 
-    private List<Long> usuarioList;
+    private List<Long> convidadoPendenteList;
 
 }

@@ -28,7 +28,8 @@ public class HomeController {
     }
 
     @GetMapping("/usuariosNaFila/{dispositivoId}")
-    public long usuariosNaFila(@PathVariable Long dispositivoId) {
+    public Long usuariosNaFila(@PathVariable Long dispositivoId) {
     	return homeService.usuariosNaFila(dispositivoId);
     }
+
 }
