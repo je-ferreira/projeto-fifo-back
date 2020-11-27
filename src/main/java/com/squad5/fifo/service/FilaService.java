@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Date;
 import java.util.Optional;
 
 @Service @RequiredArgsConstructor
@@ -24,8 +25,11 @@ public class FilaService {
         Optional<Vez> vezOptional = vezService.findPrimeiroDaFila(dispositivo);
         if(!vezOptional.isPresent()) return;
         Vez vez = vezOptional.get();
+        vez.setSaida(new Date());
+        vez = vezService.updateModel(vez);
+        Long vezId = vez.getId();
 
-        usuarioService.findByVez(vez).forEach(usuario -> participacaoService.insertNewModel(vez.getId(), usuario.getId()));
+        usuarioService.findByVez(vez).forEach(usuario -> participacaoService.insertNewModel(vezId, usuario.getId()));
     }
 
     Dispositivo procuraDispositivo(Jogo jogo) {

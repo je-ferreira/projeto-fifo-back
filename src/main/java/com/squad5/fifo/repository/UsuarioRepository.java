@@ -1,5 +1,6 @@
 package com.squad5.fifo.repository;
 
+import com.squad5.fifo.model.Dispositivo;
 import com.squad5.fifo.model.Usuario;
 import com.squad5.fifo.model.Vez;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +17,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     List<Usuario> findByVezNullAndAtivo(Boolean ativo);
 
     List<Usuario> findByVez(Vez vez);
+
+    Long countByVezDispositivoAndVezEntradaNotNullAndVezSaidaNull(Dispositivo dispositivo);
 
 }

@@ -4,6 +4,7 @@ import com.squad5.fifo.dto.UsuarioDTO;
 import com.squad5.fifo.dto.UsuarioInsertDTO;
 import com.squad5.fifo.dto.UsuarioUpdateDTO;
 import com.squad5.fifo.model.CargoUsuario;
+import com.squad5.fifo.model.Dispositivo;
 import com.squad5.fifo.model.Usuario;
 import com.squad5.fifo.model.Vez;
 import com.squad5.fifo.repository.UsuarioRepository;
@@ -96,6 +97,10 @@ public class UsuarioService {
 
     List<Usuario> findByVez(Vez vez) {
         return usuarioRepository.findByVez(vez);
+    }
+
+    Long countByVezDispositivoAndVezEntradaNotNullAndVezSaidaNull(Dispositivo dispositivo) {
+        return usuarioRepository.countByVezDispositivoAndVezEntradaNotNullAndVezSaidaNull(dispositivo);
     }
 
     private <T, U> T mergeIdToNull(U id, U nullCase, T atual, Function<U, T> finder){

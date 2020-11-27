@@ -20,6 +20,9 @@ public class Vez {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date entrada;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date saida;
+
 	@ManyToOne(optional = false)
 	private Jogo jogo;
 
@@ -32,6 +35,6 @@ public class Vez {
 	@ManyToMany(fetch = FetchType.EAGER)
 	@Fetch(FetchMode.SUBSELECT)
 	@ToString.Exclude
-	private List<Usuario> usuarioList;
+	private List<Usuario> convidadoPendenteList;
 
 }
