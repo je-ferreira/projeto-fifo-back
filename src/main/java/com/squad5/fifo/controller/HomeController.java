@@ -5,6 +5,7 @@ import com.squad5.fifo.dto.JogoDTO;
 import com.squad5.fifo.service.HomeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,4 +27,8 @@ public class HomeController {
         return homeService.findJogosAtivos();
     }
 
+    @GetMapping("/usuariosNaFila/{dispositivoId}")
+    public long usuariosNaFila(@PathVariable Long dispositivoId) {
+    	return homeService.usuariosNaFila(dispositivoId);
+    }
 }
