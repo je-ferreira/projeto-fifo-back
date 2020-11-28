@@ -44,6 +44,28 @@ Feito isso, siga o passo-a-passo:
 - Pelo terminal, navegue até a pasta do Projeto;
 - Utilize o comando para rodar: `mvn spring-boot:run`
 
+### Banco de Dados
+
+Informações do Banco:
+
+- Banco: Postgresql
+- Versão: 9.1
+- Username: postgres
+- Password: 1234
+
+Informações da IDE:
+
+- IDE: Spring Tools Suite 
+- Versão: 3.9.6.RELEASE
+
+Configurações Banco de Dados IDE Spring Tools Suite:
+
+- resources - application.properties (configuração)
+- pom.xml - driver
+
+Para rodar:
+
+- Run > Run As > Java Application
 
 ## Equipe
 
