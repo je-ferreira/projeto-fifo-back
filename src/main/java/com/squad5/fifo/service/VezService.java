@@ -31,6 +31,7 @@ public class VezService {
     private static final String MSG_USUARIO_NAO_CONVIDADO = "O usuário como id fornecido não foi convidado para essa partida.";
     private static final String MSG_USUARIO_OCUPADO = "O usuário já está na fila ou jogando.";
     private static final String MSG_HA_CONVITES_PENDENTES = "Ainda há convites pendentes.";
+    private static final String MSG_VEZ_JA_NAFILA = "Essa vez já está nessa ou em alguma fila.";
 
     private final VezRepository vezReporsitory;
 
@@ -59,7 +60,9 @@ public class VezService {
         if(convitInsertDTO.getDispositivo() != null) vez.setDispositivo(dispositivoService.findModelById(convitInsertDTO.getDispositivo()));
         usuarioService.update(modelMapper.map(usuarioService.usuarioToUsuarioDTO(usuario), UsuarioUpdateDTO.class));
         vez.setConvidadoPendenteList(usuarioList);
-        return vezToVezDTO(vezReporsitory.save(vez));
+        vez = vezReporsitory.save(vez);
+        if(vez.getConvidadoPendenteList().isEmpty()) entrarNaFila(vez.getId());
+        return vezToVezDTO(vez);
     }
 
     public VezDTO aceitarConvite(ConviteAceitoDTO conviteAceitoDTO) {
@@ -81,6 +84,7 @@ public class VezService {
         Vez vez = findModelById(vezId);
         if(!vez.getConvidadoPendenteList().isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_HA_CONVITES_PENDENTES);
+        if(vez.getEntrada() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_VEZ_JA_NAFILA);
         if(vez.getDispositivo() == null) vez.setDispositivo(filaService.procuraDispositivo(vez.getJogo()));
         vez.setEntrada(new Date());
 
@@ -99,10 +103,6 @@ public class VezService {
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
         );
     }
-
-    /*<Vez> findAllModels() {
-        return vezReporsitory.findAll();
-    }*/
 
     Vez insertNewModel(Jogo jogo) {
         return vezReporsitory.save(Vez.builder()
