@@ -2,8 +2,10 @@ package com.squad5.fifo.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.squad5.fifo.model.Dispositivo;
 import com.squad5.fifo.model.TipoDispositivo;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -124,6 +126,10 @@ public class JogoService {
 
     List<Jogo> findAtivos() {
 		return jogoRepository.findByAtivo(true);
+    }
+
+    Optional<Jogo> findAtualByDispositivo(Dispositivo dispositivo) {
+		return jogoRepository.findAtualByDispositivo(dispositivo);
     }
 
 }

@@ -41,8 +41,7 @@ public class HomeService {
 
     public Long usuariosNaFila(Long dispositivoId) {
     	Dispositivo dispositivo = dispositivoService.findModelById(dispositivoId);
-
     	return usuarioService.countByVezDispositivoAndVezEntradaNotNullAndVezSaidaNull(dispositivo);
-    	//return vezService.findAllModels().stream().filter(vez -> vez.getDispositivo().getId() == dispositivoId).map(vez -> vez.getUsuarioList()).count();
     }
+
 }

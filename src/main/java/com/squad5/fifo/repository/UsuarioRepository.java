@@ -20,4 +20,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     Long countByVezDispositivoAndVezEntradaNotNullAndVezSaidaNull(Dispositivo dispositivo);
 
+    List<Usuario> findByVezDispositivoAndVezEntradaNotNullAndVezSaidaNullOrderByVezEntradaAsc(Dispositivo dispositivod);
+
 }

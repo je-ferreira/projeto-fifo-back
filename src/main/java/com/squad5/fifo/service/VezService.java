@@ -29,7 +29,7 @@ public class VezService {
 
     private static final String MSG_ID_NAO_ENCONTRADO = "Nenhuma vez com o id fornecido foi encontrada.";
     private static final String MSG_USUARIO_NAO_CONVIDADO = "O usuário como id fornecido não foi convidado para essa partida.";
-    private static final String MSG_USUARIO_OCUPADO = "O usuário não pode aceitar convites.";
+    private static final String MSG_USUARIO_OCUPADO = "O usuário já está na fila ou jogando.";
     private static final String MSG_HA_CONVITES_PENDENTES = "Ainda há convites pendentes.";
 
     private final VezRepository vezReporsitory;
@@ -48,6 +48,7 @@ public class VezService {
     public VezDTO convidar(ConviteInsertDTO convitInsertDTO) {
         Jogo jogo = jogoService.findModelById(convitInsertDTO.getJogo());
         Usuario usuario = usuarioService.findModelById(convitInsertDTO.getConvidante());
+        if(usuario.getVez() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_OCUPADO);
         List<Usuario> usuarioList = convitInsertDTO.getConvidadoList().stream()
                 .map(usuarioService::findModelById)
                 .collect(Collectors.toList());
