@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UsuarioServiceTest {
 
     @Autowired
-    UsuarioService usuarioService;
+    private UsuarioService usuarioService;
 
     @Test
     void findDisponiveis_UsuarioDisponivel_Contains(){

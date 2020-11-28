@@ -103,6 +103,12 @@ public class UsuarioService {
         return usuarioRepository.countByVezDispositivoAndVezEntradaNotNullAndVezSaidaNull(dispositivo);
     }
 
+    List<UsuarioDTO> findByVezDispositivoAndVezEntradaNotNullAndVezSaidaNullOrderByVezEntradaAsc(Dispositivo dispositivo) {
+        return usuarioRepository.findByVezDispositivoAndVezEntradaNotNullAndVezSaidaNullOrderByVezEntradaAsc(dispositivo).stream()
+                .map(this::usuarioToUsuarioDTO)
+                .collect(Collectors.toList());
+    }
+
     private <T, U> T mergeIdToNull(U id, U nullCase, T atual, Function<U, T> finder){
         if(id == null) return atual;
         if(id.equals(nullCase)) return null;
