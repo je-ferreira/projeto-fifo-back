@@ -146,7 +146,6 @@ public class HomeServiceTest {
         ConviteInsertDTO convitInsertDTO2 = new ConviteInsertDTO();
         convitInsertDTO2.setJogo(jogoDTO.getId());
         convitInsertDTO2.setConvidante(usuarioDTO3.getId());
-        convitInsertDTO2.setConvidadoList(new ArrayList<>());
         VezDTO vezDTO2 = vezService.convidar(convitInsertDTO2);
 
         ConviteInsertDTO convitInsertDTO3 = new ConviteInsertDTO();

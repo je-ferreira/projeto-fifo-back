@@ -16,7 +16,6 @@ public class ConviteInsertDTO {
 
     private Long dispositivo;
 
-    @NotNull
     private List<Long> convidadoList;
 
 }
