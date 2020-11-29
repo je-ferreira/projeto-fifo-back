@@ -17,9 +17,8 @@ import java.util.stream.Collectors;
 @Service @RequiredArgsConstructor
 public class PartidaService {
 
-    private static final String MSG_VEZ_NAO_E_UMA_PARTIDA = "O id informado não é de uma partida acontecendo.";
     private static final String MSG_INCOMPATIBILIDADE_PARTICIPANTES = "Os participantes informados não são todos e apenas aqueles que estão jogando.";
-    private static final String MSG_RESULTADO_JA_CADASTRADO = "Os resultados dos participantes já foram cadastrados.";
+    private static final String MSG_NAO_HA_PARTIDA_DISPOSITIVO = "Não há uma partida acontecendo nesse dispositivo.";
 
     private final VezService vezService;
 
@@ -29,17 +28,15 @@ public class PartidaService {
 
     private final FilaService filaService;
 
+    private final DispositivoService dispositivoService;
+
     public List<ParticipacaoDTO> informarResultados(PartidaDTO partidaDTO) {
-        Vez vez = vezService.findModelById(partidaDTO.getVez());
-        if(vez.getSaida() == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_VEZ_NAO_E_UMA_PARTIDA);
+        Vez vez = vezService.findVezAtual(dispositivoService.findModelById(partidaDTO.getDispositivo()).getId()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NAO_HA_PARTIDA_DISPOSITIVO)
+        );
         List<Participacao> participacaoList = participacaoService.findByVez(vez);
         if(participacaoList.size() != partidaDTO.getPaticipacaoList().size())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_INCOMPATIBILIDADE_PARTICIPANTES);
-        if(participacaoList.stream()
-                .anyMatch(participacao -> participacao.getResultado() != null))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_RESULTADO_JA_CADASTRADO);
-
 
         partidaDTO.getPaticipacaoList().sort(Comparator.comparing(ParticipacaoDTO::getUsuario));
         participacaoList.sort(Comparator.comparing(participacao -> participacao.getId().getUsuario()));

@@ -79,7 +79,7 @@ public class PartidaServiceTest {
         vezDTO = vezService.entrarNaFila(vezDTO.getId());
 
         PartidaDTO partidaDTO = new PartidaDTO();
-        partidaDTO.setVez(vezDTO.getId());
+        partidaDTO.setDispositivo(dispositivoDTO.getId());
         List<ParticipacaoDTO> paticipacaoDTOList = new ArrayList<>();
         partidaDTO.setPaticipacaoList(paticipacaoDTOList);
 

@@ -8,10 +8,7 @@ import com.squad5.fifo.dto.DispositivoInsertDTO;
 import com.squad5.fifo.dto.DispositivoUpdateDTO;
 import com.squad5.fifo.model.Jogo;
 import com.squad5.fifo.model.TipoDispositivo;
-import com.squad5.fifo.model.Vez;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,9 +30,6 @@ public class DispositivoService {
 	private final DispositivoRepository dispositivoRepository;
 
 	private final TipoDispositivoService tipoDispositivoService;
-
-	@Setter(AccessLevel.PACKAGE)
-	private VezService vezService;
 
 	private final ModelMapper modelMapper;
 
@@ -94,11 +88,6 @@ public class DispositivoService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_TIPO_NAO_ENCONTRADO);
 
 		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
-	}
-
-	public Long findVezAtual(Long id) {
-		Vez vez =  vezService.findVezAtual(id).orElse(null);
-		return vez == null ? null : vez.getId();
 	}
 
 	Dispositivo findModelById(Long id) {

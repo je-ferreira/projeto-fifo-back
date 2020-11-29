@@ -157,7 +157,6 @@ public class VezService {
     @PostConstruct
     void init(){
         usuarioService.setVezService(this);
-        dispositivoService.setVezService(this);
     }
 
 }

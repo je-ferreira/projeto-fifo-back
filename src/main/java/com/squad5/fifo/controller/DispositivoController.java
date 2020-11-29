@@ -60,9 +60,4 @@ public class DispositivoController {
 		return dispositivoService.removeTipoDispositivo(dispositivoId, tipoDispositivoId);
 	}
 
-	@GetMapping("/{id}/vez")
-	public Long vezAtual(@PathVariable Long id){
-		return dispositivoService.findVezAtual(id);
-	}
-
 }

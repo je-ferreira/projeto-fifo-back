@@ -9,7 +9,7 @@ import java.util.List;
 public class PartidaDTO {
 
     @NotNull
-    private Long vez;
+    private Long dispositivo;
 
     @NotNull
     private List<ParticipacaoDTO> paticipacaoList;

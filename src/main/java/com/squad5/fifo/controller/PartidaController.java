@@ -22,8 +22,8 @@ public class PartidaController {
 
     private final PartidaService partidaService;
 
-    @PostMapping("/{dispositivoId}")
-    public List<ParticipacaoDTO> post(@RequestBody @Valid PartidaDTO partidaDTO) {
+    @PostMapping("/finalizar")
+    public List<ParticipacaoDTO> finalizarPartida(@RequestBody @Valid PartidaDTO partidaDTO) {
         if(partidaDTO.getPaticipacaoList().stream()
                 .map(ParticipacaoDTO::getUsuario)
                 .distinct().count()
