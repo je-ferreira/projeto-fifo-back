@@ -16,7 +16,7 @@ import java.util.List;
 public class FilaController {
 
     private static final String MSG_CONVIDANTE_NAO_PODE_SER_CONVIDADO = "O Convidante não pode ser um dos convidados.";
-    private static final String MSG_CONVIDADOS_REPETIDOS = "Há Ids repetidos na lista de convidados.";
+    private static final String MSG_CONVIDADOS_REPETIDOS = "Há ids repetidos na lista de convidados.";
 
     private final FilaService filaService;
 
