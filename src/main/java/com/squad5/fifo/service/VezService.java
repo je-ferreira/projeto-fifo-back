@@ -150,9 +150,14 @@ public class VezService {
         return vezReporsitory.findFirstByDispositivo(dispositivo);
     }
 
+    Optional<Vez> findVezAtual(Long dispositivoId){
+        return vezReporsitory.findDistinctVezByResultadoNullAndDispositivo(dispositivoService.findModelById(dispositivoId));
+    }
+
     @PostConstruct
     void init(){
         usuarioService.setVezService(this);
+        dispositivoService.setVezService(this);
     }
 
 }
