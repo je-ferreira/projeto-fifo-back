@@ -21,7 +21,7 @@ public interface VezRepository extends JpaRepository<Vez, Long> {
 
     Optional<Vez> findByEntradaGreaterThan(Date entrada);
 
-    @Query("SELECT v FROM Vez v WHERE v.dispositivo = :dispositivo ORDER BY v.entrada DESC")
+    @Query("SELECT v FROM Vez v WHERE v.dispositivo = :dispositivo AND v.saida IS NULL AND v.entrada IS NOT NULL ORDER BY v.entrada DESC")
     Optional<Vez> findFirstByDispositivo(Dispositivo dispositivo);
 
 }

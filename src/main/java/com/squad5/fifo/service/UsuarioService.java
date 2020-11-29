@@ -109,6 +109,14 @@ public class UsuarioService {
                 .collect(Collectors.toList());
     }
 
+    List<Usuario> saveAll(List<Usuario> usuarioList) {
+        return usuarioRepository.saveAll(usuarioList);
+    }
+
+    List<Usuario> findAllById(List<Long> idList) {
+        return usuarioRepository.findAllById(idList);
+    }
+
     private <T, U> T mergeIdToNull(U id, U nullCase, T atual, Function<U, T> finder){
         if(id == null) return atual;
         if(id.equals(nullCase)) return null;

@@ -1,7 +1,9 @@
 package com.squad5.fifo.service;
 
+import com.squad5.fifo.dto.ParticipacaoDTO;
 import com.squad5.fifo.model.Participacao;
 import com.squad5.fifo.model.ParticipacaoId;
+import com.squad5.fifo.model.Vez;
 import com.squad5.fifo.repository.ParticipacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -51,6 +53,21 @@ public class ParticipacaoService {
 
     void deleteById(Long vezId, Long usuarioId) {
         participacaoRepository.deleteById(findModelById(vezId, usuarioId).getId());
+    }
+
+    List<Participacao> findByVez(Vez vez) {
+        return participacaoRepository.findByIdVez(vez.getId());
+    }
+
+    List<Participacao> saveAll(List<Participacao> participacaoList) {
+        return participacaoRepository.saveAll(participacaoList);
+    }
+
+    ParticipacaoDTO participacaoToParticipacaoDTO(Participacao participacao) {
+        ParticipacaoDTO participacaoDTO = modelMapper.map(participacao, ParticipacaoDTO.class);
+        participacaoDTO.setUsuario(participacao.getId().getUsuario());
+        participacaoDTO.setVez(participacao.getId().getVez());
+        return participacaoDTO;
     }
 
 }
