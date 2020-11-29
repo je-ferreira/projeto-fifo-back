@@ -117,10 +117,16 @@ public class UsuarioService {
         return usuarioRepository.findAllById(idList);
     }
 
+    void updateAdmin(Long id) {
+        Usuario usuario = findModelById(id);
+        usuario.setCargoUsuario(CargoUsuario.ADMIN);
+        usuarioRepository.save(usuario);
+    }
+
     private <T, U> T mergeIdToNull(U id, U nullCase, T atual, Function<U, T> finder){
         if(id == null) return atual;
         if(id.equals(nullCase)) return null;
         return finder.apply(id);
     }
-
+    
 }
