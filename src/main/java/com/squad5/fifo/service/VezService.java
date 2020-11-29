@@ -47,19 +47,23 @@ public class VezService {
     private FilaService filaService;
 
     public VezDTO convidar(ConviteInsertDTO convitInsertDTO) {
-        Jogo jogo = jogoService.findModelById(convitInsertDTO.getJogo());
-        Usuario usuario = usuarioService.findModelById(convitInsertDTO.getConvidante());
-        if(usuario.getVez() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_OCUPADO);
         List<Usuario> usuarioList;
         if(convitInsertDTO.getConvidadoList() == null) usuarioList = new ArrayList<>();
         else usuarioList = convitInsertDTO.getConvidadoList().stream()
                 .map(usuarioService::findModelById)
                 .collect(Collectors.toList());
+        Usuario usuario = usuarioService.findModelById(convitInsertDTO.getConvidante());
+        if(usuario.getVez() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_OCUPADO);
+        Jogo jogo = jogoService.findModelById(convitInsertDTO.getJogo());
+        Dispositivo dispositivo;
+        if(convitInsertDTO.getDispositivo() != null) dispositivo = dispositivoService.findModelById(convitInsertDTO.getDispositivo());
+        else dispositivo = null;
 
         Vez vez = insertNewModel(jogoService.findModelById(jogo.getId()));
+        vez.setDispositivo(dispositivo);
         usuario.setVez(vez);
         vez.setConvidante(usuario);
-        if(convitInsertDTO.getDispositivo() != null) vez.setDispositivo(dispositivoService.findModelById(convitInsertDTO.getDispositivo()));
+
         usuarioService.update(modelMapper.map(usuarioService.usuarioToUsuarioDTO(usuario), UsuarioUpdateDTO.class));
         vez.setConvidadoPendenteList(usuarioList);
         vez = vezReporsitory.save(vez);

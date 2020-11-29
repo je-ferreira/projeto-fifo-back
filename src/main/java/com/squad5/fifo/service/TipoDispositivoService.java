@@ -49,9 +49,9 @@ public class TipoDispositivoService {
 	public TipoDispositivoDTO update(TipoDispositivoUpdateDTO tipoDispositivoUpdateDTO) {
 		TipoDispositivo tipoDispositivo = findModelById(tipoDispositivoUpdateDTO.getId());
 
-		if(tipoDispositivoUpdateDTO.getNome() != null &&
-				!tipoDispositivoUpdateDTO.getNome().equals(tipoDispositivo.getNome()) &&
-				nomeJaCadastrado(tipoDispositivoUpdateDTO.getNome()))
+		if(tipoDispositivoUpdateDTO.getNome() != null
+				&& !tipoDispositivoUpdateDTO.getNome().equals(tipoDispositivo.getNome())
+				&& nomeJaCadastrado(tipoDispositivoUpdateDTO.getNome()))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
 
 		modelMapper.map(tipoDispositivoUpdateDTO, tipoDispositivo);

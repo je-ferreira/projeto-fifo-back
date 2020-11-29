@@ -59,9 +59,9 @@ public class UsuarioService {
 
     public UsuarioDTO update(UsuarioUpdateDTO usuarioUpdateDTO) {
         Usuario usuario = findModelById(usuarioUpdateDTO.getId());
-        if(usuarioUpdateDTO.getEmail() != null &&
-                !usuarioUpdateDTO.getEmail().equals(usuario.getEmail()) &&
-                usuarioRepository.findByEmail(usuarioUpdateDTO.getEmail()).isPresent())
+        if(usuarioUpdateDTO.getEmail() != null
+                && !usuarioUpdateDTO.getEmail().equals(usuario.getEmail())
+                && usuarioRepository.findByEmail(usuarioUpdateDTO.getEmail()).isPresent())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_EMAIL_JA_CADASTRADO);
 
         modelMapper.map(usuarioUpdateDTO, usuario);
