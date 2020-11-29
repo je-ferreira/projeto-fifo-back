@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Service @RequiredArgsConstructor
 public class VezService {
 
-    private static final String MSG_ID_NAO_ENCONTRADO = "Nenhuma vez com o id fornecido foi encontrada.";
+    private static final String MSG_ID_NAO_ENCONTRADO = "Nenhuma \"vez\" com o id fornecido foi encontrada.";
     private static final String MSG_USUARIO_NAO_CONVIDADO = "O usuário como id fornecido não foi convidado para essa partida.";
     private static final String MSG_USUARIO_OCUPADO = "O usuário já está na fila ou jogando.";
     private static final String MSG_HA_CONVITES_PENDENTES = "Ainda há convites pendentes.";
@@ -47,17 +47,23 @@ public class VezService {
     private FilaService filaService;
 
     public VezDTO convidar(ConviteInsertDTO convitInsertDTO) {
-        Jogo jogo = jogoService.findModelById(convitInsertDTO.getJogo());
-        Usuario usuario = usuarioService.findModelById(convitInsertDTO.getConvidante());
-        if(usuario.getVez() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_OCUPADO);
-        List<Usuario> usuarioList = convitInsertDTO.getConvidadoList().stream()
+        List<Usuario> usuarioList;
+        if(convitInsertDTO.getConvidadoList() == null) usuarioList = new ArrayList<>();
+        else usuarioList = convitInsertDTO.getConvidadoList().stream()
                 .map(usuarioService::findModelById)
                 .collect(Collectors.toList());
+        Usuario usuario = usuarioService.findModelById(convitInsertDTO.getConvidante());
+        if(usuario.getVez() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_OCUPADO);
+        Jogo jogo = jogoService.findModelById(convitInsertDTO.getJogo());
+        Dispositivo dispositivo;
+        if(convitInsertDTO.getDispositivo() != null) dispositivo = dispositivoService.findModelById(convitInsertDTO.getDispositivo());
+        else dispositivo = null;
 
         Vez vez = insertNewModel(jogoService.findModelById(jogo.getId()));
+        vez.setDispositivo(dispositivo);
         usuario.setVez(vez);
         vez.setConvidante(usuario);
-        if(convitInsertDTO.getDispositivo() != null) vez.setDispositivo(dispositivoService.findModelById(convitInsertDTO.getDispositivo()));
+
         usuarioService.update(modelMapper.map(usuarioService.usuarioToUsuarioDTO(usuario), UsuarioUpdateDTO.class));
         vez.setConvidadoPendenteList(usuarioList);
         vez = vezReporsitory.save(vez);
@@ -127,7 +133,8 @@ public class VezService {
     VezDTO vezToVezDTO(Vez vez) {
         VezDTO vezDTO = modelMapper.map(vez, VezDTO.class);
         vezDTO.setJogo(vez.getJogo().getId());
-        if(vez.getJogo() != null) vezDTO.setDispositivo(vez.getJogo().getId());
+        if(vez.getDispositivo() != null) vezDTO.setDispositivo(vez.getDispositivo().getId());
+        if(vez.getConvidante() != null) vezDTO.setConvidante(vez.getConvidante().getId());
         if(vez.getConvidadoPendenteList() != null) vezDTO.setConvidadoPendenteList(vez.getConvidadoPendenteList().stream()
                 .map(Usuario::getId)
                 .collect(Collectors.toList())

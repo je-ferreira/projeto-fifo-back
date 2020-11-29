@@ -55,9 +55,9 @@ public class DispositivoService {
 	public DispositivoDTO update(DispositivoUpdateDTO dispositivoUpdateDTO) {
 		Dispositivo dispositivo = findModelById(dispositivoUpdateDTO.getId());
 
-		if(dispositivoUpdateDTO.getNome() != null &&
-				!dispositivoUpdateDTO.getNome().equals(dispositivo.getNome()) &&
-				dispositivoRepository.findByNome(dispositivoUpdateDTO.getNome()).isPresent())
+		if(dispositivoUpdateDTO.getNome() != null
+				&& !dispositivoUpdateDTO.getNome().equals(dispositivo.getNome())
+				&& dispositivoRepository.findByNome(dispositivoUpdateDTO.getNome()).isPresent())
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
 
 		modelMapper.map(dispositivoUpdateDTO, dispositivo);

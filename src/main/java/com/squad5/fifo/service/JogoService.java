@@ -57,9 +57,9 @@ public class JogoService {
 	public JogoDTO update(JogoUpdateDTO jogoUpdateDTO) {
 		Jogo jogo = findModelById(jogoUpdateDTO.getId());
 
-		if(jogoUpdateDTO.getNome() != null &&
-				!jogoUpdateDTO.getNome().equals(jogo.getNome()) &&
-				nomeJaCadastrado(jogoUpdateDTO.getNome()))
+		if(jogoUpdateDTO.getNome() != null
+				&& !jogoUpdateDTO.getNome().equals(jogo.getNome())
+				&& nomeJaCadastrado(jogoUpdateDTO.getNome()))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NOME_JA_CADASTRADO);
 
 		modelMapper.map(jogoUpdateDTO, jogo);
