@@ -28,8 +28,9 @@ public class VezService {
     private static final String MSG_USUARIO_NAO_CONVIDADO = "O usuário como id fornecido não foi convidado para essa partida.";
     private static final String MSG_USUARIO_OCUPADO = "O usuário já está na fila ou jogando.";
     private static final String MSG_HA_CONVITES_PENDENTES = "Ainda há convites pendentes.";
-    private static final String MSG_VEZ_JA_NAFILA = "Essa vez já está nessa ou em alguma fila.";
+    private static final String MSG_VEZ_JA_NA_FILA = "Essa \"vez\" já está nessa ou em alguma fila.";
     private static final String MSG_JGODO_E_DISPOSITIVO_INCONPATIVEIS = "O dispositivo e o jogo são incompatíveis.";
+    private static final String MSG_NAO_HA_PARTIDA_DISPOSITIVO = "Não há uma partida acontecendo nesse dispositivo.";
 
     private final VezRepository vezReporsitory;
 
@@ -91,12 +92,10 @@ public class VezService {
     }
 
     public VezDTO entrarNaFila(Long usuarioId) {
-        Vez vez = usuarioService.findModelById(usuarioId).getVez();
-        if(!vez.getConvidadoPendenteList().isEmpty())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_HA_CONVITES_PENDENTES);
-        if(vez.getEntrada() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_VEZ_JA_NAFILA);
-        vez.setEntrada(new Date());
+        Vez vez = validVezConvitesAceitos(usuarioService.findModelById(usuarioId));
+        if(vez.getEntrada() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_VEZ_JA_NA_FILA);
 
+        vez.setEntrada(new Date());
         vez = vezReporsitory.save(vez);
 
         if(!(vezReporsitory.findDistinctVezByResultadoNullAndDispositivo(vez.getDispositivo()).isPresent()
@@ -146,8 +145,17 @@ public class VezService {
         return vezReporsitory.findFirstByDispositivo(dispositivo);
     }
 
-    Optional<Vez> findVezAtual(Long dispositivoId){
-        return vezReporsitory.findDistinctVezByResultadoNullAndDispositivo(dispositivoService.findModelById(dispositivoId));
+    Vez findVezAtual(Dispositivo dispositivo){
+        return vezReporsitory.findDistinctVezByResultadoNullAndDispositivo(dispositivo).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NAO_HA_PARTIDA_DISPOSITIVO)
+        );
+    }
+
+    Vez validVezConvitesAceitos(Usuario usuario){
+        Vez vez = usuario.getVez();
+        if(!vez.getConvidadoPendenteList().isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_HA_CONVITES_PENDENTES);
+        return vez;
     }
 
     @PostConstruct

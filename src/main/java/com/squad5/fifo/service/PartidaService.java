@@ -1,5 +1,6 @@
 package com.squad5.fifo.service;
 
+import com.squad5.fifo.dto.ConfirmacaoDTO;
 import com.squad5.fifo.dto.ParticipacaoDTO;
 import com.squad5.fifo.dto.PartidaDTO;
 import com.squad5.fifo.model.Participacao;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 public class PartidaService {
 
     private static final String MSG_INCOMPATIBILIDADE_PARTICIPANTES = "Os participantes informados não são todos e apenas aqueles que estão jogando.";
-    private static final String MSG_NAO_HA_PARTIDA_DISPOSITIVO = "Não há uma partida acontecendo nesse dispositivo.";
 
     private final VezService vezService;
 
@@ -31,9 +31,7 @@ public class PartidaService {
     private final DispositivoService dispositivoService;
 
     public List<ParticipacaoDTO> informarResultados(PartidaDTO partidaDTO) {
-        Vez vez = vezService.findVezAtual(dispositivoService.findModelById(partidaDTO.getDispositivo()).getId()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_NAO_HA_PARTIDA_DISPOSITIVO)
-        );
+        Vez vez = vezService.findVezAtual(dispositivoService.findModelById(partidaDTO.getDispositivo()));
         List<Participacao> participacaoList = participacaoService.findByVez(vez);
         if(participacaoList.size() != partidaDTO.getPaticipacaoList().size())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_INCOMPATIBILIDADE_PARTICIPANTES);
@@ -57,6 +55,10 @@ public class PartidaService {
         filaService.atualizar(vez.getDispositivo());
 
         return participacaoDTOList;
+    }
+
+    public ConfirmacaoDTO partidaDados(Long dispositivoId) {
+        return filaService.vezDados(vezService.findVezAtual(dispositivoService.findModelById(dispositivoId)));
     }
 
 }
