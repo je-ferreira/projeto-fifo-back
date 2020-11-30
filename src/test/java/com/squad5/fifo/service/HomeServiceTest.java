@@ -69,10 +69,10 @@ public class HomeServiceTest {
         convitInsertDTO.getConvidadoList().add(usuarioDTO2.getId());
         VezDTO vezDTO = vezService.convidar(convitInsertDTO);
 
-        ConviteAceitoDTO conviteAceitoDTO = new ConviteAceitoDTO();
-        conviteAceitoDTO.setVez(vezDTO.getId());
-        conviteAceitoDTO.setUsuario(usuarioDTO2.getId());
-        vezDTO = vezService.aceitarConvite(conviteAceitoDTO);
+        ConviteDTO conviteDTO = new ConviteDTO();
+        conviteDTO.setConvidante(vezDTO.getConvidante());
+        conviteDTO.setUsuario(usuarioDTO2.getId());
+        vezDTO = vezService.aceitarConvite(conviteDTO);
 
         vezDTO = vezService.entrarNaFila(vezDTO.getConvidante());
 
@@ -136,10 +136,10 @@ public class HomeServiceTest {
         convitInsertDTO.getConvidadoList().add(usuarioDTO2.getId());
         VezDTO vezDTO = vezService.convidar(convitInsertDTO);
 
-        ConviteAceitoDTO conviteAceitoDTO = new ConviteAceitoDTO();
-        conviteAceitoDTO.setVez(vezDTO.getId());
-        conviteAceitoDTO.setUsuario(usuarioDTO2.getId());
-        vezDTO = vezService.aceitarConvite(conviteAceitoDTO);
+        ConviteDTO conviteDTO = new ConviteDTO();
+        conviteDTO.setConvidante(vezDTO.getConvidante());
+        conviteDTO.setUsuario(usuarioDTO2.getId());
+        vezDTO = vezService.aceitarConvite(conviteDTO);
 
         vezDTO = vezService.entrarNaFila(vezDTO.getConvidante());
 
@@ -155,10 +155,10 @@ public class HomeServiceTest {
         convitInsertDTO3.getConvidadoList().add(usuarioDTO5.getId());
         VezDTO vezDTO3 = vezService.convidar(convitInsertDTO3);
 
-        ConviteAceitoDTO conviteAceitoDTO2 = new ConviteAceitoDTO();
-        conviteAceitoDTO2.setVez(vezDTO3.getId());
-        conviteAceitoDTO2.setUsuario(usuarioDTO5.getId());
-        vezDTO3 = vezService.aceitarConvite(conviteAceitoDTO2);
+        ConviteDTO conviteDTO2 = new ConviteDTO();
+        conviteDTO2.setConvidante(vezDTO3.getConvidante());
+        conviteDTO2.setUsuario(usuarioDTO5.getId());
+        vezDTO3 = vezService.aceitarConvite(conviteDTO2);
 
         vezDTO3 = vezService.entrarNaFila(vezDTO3.getConvidante());
 

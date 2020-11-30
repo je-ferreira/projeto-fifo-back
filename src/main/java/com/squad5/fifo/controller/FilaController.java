@@ -45,8 +45,13 @@ public class FilaController {
     }
 
     @PostMapping("/aceitar")
-    public VezDTO aceitarConvite(@RequestBody @Valid ConviteAceitoDTO conviteAceitoDTO){
-        return vezService.aceitarConvite(conviteAceitoDTO);
+    public VezDTO aceitarConvite(@RequestBody @Valid ConviteDTO conviteDTO){
+        return vezService.aceitarConvite(conviteDTO);
+    }
+
+    @PostMapping("/recusar")
+    public VezDTO recusarConvite(@RequestBody @Valid ConviteDTO conviteDTO){
+        return vezService.recusarConvite(conviteDTO);
     }
 
     @GetMapping("/confirmarEntrada/{usuarioId}")

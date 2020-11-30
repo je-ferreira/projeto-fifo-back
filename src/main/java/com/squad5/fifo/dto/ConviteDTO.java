@@ -5,10 +5,10 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class ConviteAceitoDTO {
+public class ConviteDTO {
 
     @NotNull
-    private Long vez;
+    private Long convidante;
 
     @NotNull
     private Long usuario;

@@ -71,10 +71,10 @@ public class PartidaServiceTest {
         convitInsertDTO.getConvidadoList().add(usuarioDTO2.getId());
         VezDTO vezDTO = vezService.convidar(convitInsertDTO);
 
-        ConviteAceitoDTO conviteAceitoDTO = new ConviteAceitoDTO();
-        conviteAceitoDTO.setVez(vezDTO.getId());
-        conviteAceitoDTO.setUsuario(usuarioDTO2.getId());
-        vezDTO = vezService.aceitarConvite(conviteAceitoDTO);
+        ConviteDTO conviteDTO = new ConviteDTO();
+        conviteDTO.setConvidante(vezDTO.getConvidante());
+        conviteDTO.setUsuario(usuarioDTO2.getId());
+        vezDTO = vezService.aceitarConvite(conviteDTO);
 
         vezDTO = vezService.entrarNaFila(vezDTO.getConvidante());
 

@@ -31,6 +31,7 @@ public class VezService {
     private static final String MSG_VEZ_JA_NA_FILA = "Essa \"vez\" já está nessa ou em alguma fila.";
     private static final String MSG_JGODO_E_DISPOSITIVO_INCONPATIVEIS = "O dispositivo e o jogo são incompatíveis.";
     private static final String MSG_NAO_HA_PARTIDA_DISPOSITIVO = "Não há uma partida acontecendo nesse dispositivo.";
+    private static final String MSG_USUARIO_NAO_CONVIDANTE = "Não há um convite enviado por esse usuário.";
 
     private final VezRepository vezReporsitory;
 
@@ -46,14 +47,14 @@ public class VezService {
     private FilaService filaService;
 
     public VezDTO convidar(ConviteInsertDTO convitInsertDTO) {
+        Usuario usuario = usuarioService.findModelById(convitInsertDTO.getConvidante());
+        if(usuario.getVez() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_OCUPADO);
+        Jogo jogo = jogoService.findModelById(convitInsertDTO.getJogo());
         List<Usuario> usuarioList;
         if(convitInsertDTO.getConvidadoList() == null) usuarioList = new ArrayList<>();
         else usuarioList = convitInsertDTO.getConvidadoList().stream()
                 .map(usuarioService::findModelById)
                 .collect(Collectors.toList());
-        Usuario usuario = usuarioService.findModelById(convitInsertDTO.getConvidante());
-        if(usuario.getVez() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_OCUPADO);
-        Jogo jogo = jogoService.findModelById(convitInsertDTO.getJogo());
         Dispositivo dispositivo;
         if(convitInsertDTO.getDispositivo() != null){
             dispositivo = dispositivoService.findModelById(convitInsertDTO.getDispositivo());
@@ -76,9 +77,10 @@ public class VezService {
         return vezToVezDTO(vez);
     }
 
-    public VezDTO aceitarConvite(ConviteAceitoDTO conviteAceitoDTO) {
-        Vez vez = findModelById(conviteAceitoDTO.getVez());
-        Usuario usuario = vez.getConvidadoPendenteList().stream().filter(convidado -> conviteAceitoDTO.getUsuario().equals(convidado.getId())).findFirst().orElseThrow(
+    public VezDTO aceitarConvite(ConviteDTO conviteDTO) {
+        Vez vez = usuarioService.findModelById(conviteDTO.getConvidante()).getVez();
+        if(vez == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_NAO_CONVIDANTE);
+        Usuario usuario = vez.getConvidadoPendenteList().stream().filter(convidado -> conviteDTO.getUsuario().equals(convidado.getId())).findFirst().orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_NAO_CONVIDADO)
         );
 
@@ -104,6 +106,18 @@ public class VezService {
         }
 
         return vezToVezDTO(vez);
+    }
+
+    public VezDTO recusarConvite(ConviteDTO conviteDTO) {
+        Vez vez = usuarioService.findModelById(conviteDTO.getConvidante()).getVez();
+        if(vez == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_NAO_CONVIDANTE);
+        Usuario usuario = vez.getConvidadoPendenteList().stream().filter(convidado -> conviteDTO.getUsuario().equals(convidado.getId())).findFirst().orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_NAO_CONVIDADO)
+        );
+
+        vez.getConvidadoPendenteList().removeIf(convidado -> convidado.getId().equals(usuario.getId()));
+
+        return vezToVezDTO(vezReporsitory.save(vez));
     }
 
     Vez findModelById(Long id) {
