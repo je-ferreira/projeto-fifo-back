@@ -21,6 +21,11 @@ public class Jogo {
 	private String nome;
 	
 	private Boolean ativo;
+
+	private String urlCapa;
+
+	@ManyToOne
+	private Dispositivo dispositivoPreferencial;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)

@@ -76,7 +76,7 @@ public class PartidaServiceTest {
         conviteAceitoDTO.setUsuario(usuarioDTO2.getId());
         vezDTO = vezService.aceitarConvite(conviteAceitoDTO);
 
-        vezDTO = vezService.entrarNaFila(vezDTO.getId());
+        vezDTO = vezService.entrarNaFila(vezDTO.getConvidante());
 
         PartidaDTO partidaDTO = new PartidaDTO();
         partidaDTO.setDispositivo(dispositivoDTO.getId());

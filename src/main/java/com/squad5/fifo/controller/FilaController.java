@@ -49,9 +49,15 @@ public class FilaController {
         return vezService.aceitarConvite(conviteAceitoDTO);
     }
 
-    @GetMapping("/confirmarEntrada/{idVez}")
-    public VezDTO entrarNaFila(@PathVariable Long idVez){
-        return vezService.entrarNaFila(idVez);
+    @GetMapping("/confirmarEntrada/{idUsuario}")
+    public VezDTO entrarNaFila(@PathVariable Long idUsuario){
+        return vezService.entrarNaFila(idUsuario);
+    }
+
+
+    @GetMapping("/confirmarEntrada/{idUsuario}/dadosPagina")
+    public ConfirmacaoDTO confimacaoVez(@PathVariable Long idUsuario){
+        return filaService.vezDadosConfirmacao(idUsuario);
     }
 
 }

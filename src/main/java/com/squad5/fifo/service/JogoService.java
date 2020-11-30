@@ -20,6 +20,8 @@ import com.squad5.fifo.repository.JogoRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Service @RequiredArgsConstructor
 public class JogoService {
 
@@ -28,10 +30,12 @@ public class JogoService {
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um jogo com o nome fornecido.";
 	private static final String MSG_ID_TIPO_NAO_ENCONTRADO = "Não há nenhum tipo de dispositivo com esse id vinculado ao jogo.";
 	private static final String MSG_TIPO_JA_CADASTRADO = "O tipo de dispositivo informado já está relacionado ao jogo em questão.";
+	private static final String MSG_DISPOSITIVO_INCOPATIVEL = "O dispositivo e o jogo são incompatíveis.";
 
 	//Dependencies
 	private final JogoRepository jogoRepository;
 	private final TipoDispositivoService tipoDispositivoService;
+	private final DispositivoService dispositivoService;
 	private final ModelMapper modelMapper;
 	
 	//CRUD
@@ -72,7 +76,7 @@ public class JogoService {
 	}
 	
 	//TipoDispositivo
-	public JogoDTO addTipoDispositivo(Long jogoId, Long tipoDispositivoId) {
+	public JogoDTO addTipoDispositivo(@NotNull Long jogoId, @NotNull Long tipoDispositivoId) {
 		Jogo jogo = findModelById(jogoId);
 		TipoDispositivo tipoDispositivo = tipoDispositivoService.findModelById(tipoDispositivoId);
 
@@ -83,13 +87,24 @@ public class JogoService {
 		return jogoToJogoDTO(jogoRepository.save(jogo));
 	}
 	
-	public JogoDTO removeTipoDispositivo(Long jogoId, Long tipoDispositivoId) {
+	public JogoDTO removeTipoDispositivo(@NotNull Long jogoId, @NotNull Long tipoDispositivoId) {
 		Jogo jogo = findModelById(jogoId);
 		tipoDispositivoService.findModelById(tipoDispositivoId);
 		
 		if (!jogo.getTipoDispositivoList().removeIf(tipoDispositivo -> tipoDispositivo.getId().equals(tipoDispositivoId)))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_TIPO_NAO_ENCONTRADO);
 
+		return jogoToJogoDTO(jogoRepository.save(jogo));
+	}
+
+	//Dispositivo
+	public JogoDTO configurarDispositivoPreferencial(@NotNull Long jogoId, @NotNull Long dispositivoId){
+		Jogo jogo = findModelById(jogoId);
+		Dispositivo dispositivo = dispositivoService.findModelById(dispositivoId);
+		if(!jogoDispositivoSaoCompativeis(jogo, dispositivo))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_DISPOSITIVO_INCOPATIVEL);
+
+		jogo.setDispositivoPreferencial(dispositivo);
 		return jogoToJogoDTO(jogoRepository.save(jogo));
 	}
 
@@ -107,6 +122,7 @@ public class JogoService {
 	JogoDTO jogoToJogoDTO(Jogo jogo) {
 		JogoDTO jogoDTO = modelMapper.map(jogo, JogoDTO.class);
 		jogoDTO.setTipoDispositivoIdList(new ArrayList<>());
+		if(jogo.getDispositivoPreferencial() != null) jogoDTO.setDispositivoPreferencial(jogo.getDispositivoPreferencial().getId());
 		jogo.getTipoDispositivoList().stream()
 				.map(TipoDispositivo::getId)
 				.forEach(jogoDTO.getTipoDispositivoIdList()::add);
@@ -116,6 +132,7 @@ public class JogoService {
 	
 	Jogo JogoDTOToJogo(JogoDTO jogoDTO) {
 		Jogo jogo = modelMapper.map(jogoDTO, Jogo.class);
+		if(jogoDTO.getDispositivoPreferencial() != null) jogo.setDispositivoPreferencial(dispositivoService.findModelById(jogoDTO.getId()));
 		if(jogoDTO.getTipoDispositivoIdList() != null)
 			jogo.setTipoDispositivoList(jogoDTO.getTipoDispositivoIdList().stream()
 					.map(tipoDispositivoService::findModelById)
@@ -131,5 +148,11 @@ public class JogoService {
     Optional<Jogo> findAtualByDispositivo(Dispositivo dispositivo) {
 		return jogoRepository.findAtualByDispositivo(dispositivo);
     }
+
+    boolean jogoDispositivoSaoCompativeis(Jogo jogo, Dispositivo dispositivo){
+		return dispositivo.getTipoDispositivoList().stream()
+				.anyMatch(tipoDispositivo -> jogo.getTipoDispositivoList().stream()
+						.anyMatch(tipoDispositivoJogo -> tipoDispositivo.getId().equals(tipoDispositivoJogo.getId())));
+	}
 
 }

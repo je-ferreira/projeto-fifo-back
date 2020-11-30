@@ -18,6 +18,12 @@ public class JogoUpdateDTO extends JogoDTO {
 	@NullOrNotBlank
 	private String nome;
 
+	@NullOrNotBlank
+	private String urlsCapa;
+
+	@JsonIgnore
+	private Long dispositivoPreferencial;
+
 	@JsonIgnore
 	private List<Long> tipoDispositivoIdList;
 

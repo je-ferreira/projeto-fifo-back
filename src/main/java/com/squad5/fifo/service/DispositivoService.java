@@ -18,6 +18,8 @@ import com.squad5.fifo.dto.DispositivoDTO;
 import com.squad5.fifo.model.Dispositivo;
 import com.squad5.fifo.repository.DispositivoRepository;
 
+import javax.validation.constraints.NotNull;
+
 @Service @RequiredArgsConstructor
 public class DispositivoService {
 	
@@ -25,7 +27,6 @@ public class DispositivoService {
 	private static final String MSG_NOME_JA_CADASTRADO = "Já há um dispositivo com o nome fornecido.";
 	private static final String MSG_ID_TIPO_NAO_ENCONTRADO = "Não há nenhum tipo de dispositivo com esse id vinculado ao dispositivo.";
 	private static final String MSG_TIPO_JA_CADASTRADO = "O tipo de dispositivo informado já está relacionado ao dispositivo em questão.";
-	private static final String MSG_DISPOSITIVO_TIPO_NAO_EXISTE = "Não há um dispositivo com o tipo informado.";
 
 	private final DispositivoRepository dispositivoRepository;
 
@@ -69,7 +70,7 @@ public class DispositivoService {
 		dispositivoRepository.deleteById(id);
 	}
 
-	public DispositivoDTO addTipoDispositivo(Long dispositivoId, Long tipoDispositivoId) {
+	public DispositivoDTO addTipoDispositivo(@NotNull Long dispositivoId, @NotNull Long tipoDispositivoId) {
 		Dispositivo dispositivo = findModelById(dispositivoId);
 		TipoDispositivo tipoDispositivo = tipoDispositivoService.findModelById(tipoDispositivoId);
 
@@ -80,7 +81,7 @@ public class DispositivoService {
 		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
 	}
 
-	public DispositivoDTO removeTipoDispositivo(Long dispositivoId, Long tipoDispositivoId) {
+	public DispositivoDTO removeTipoDispositivo(@NotNull Long dispositivoId, @NotNull Long tipoDispositivoId) {
 		Dispositivo dispositivo = findModelById(dispositivoId);
 		tipoDispositivoService.findModelById(tipoDispositivoId);
 
@@ -116,10 +117,8 @@ public class DispositivoService {
 		return dispositivo;
 	}
 
-	Dispositivo findFirstByTipoDispositivo(Jogo jogo) {
-		return dispositivoRepository.findByTipoDispositivo(jogo).orElseThrow(
-				() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_DISPOSITIVO_TIPO_NAO_EXISTE)
-		);
+	List<Dispositivo> findAllByTipoDispositivo(Jogo jogo) {
+		return dispositivoRepository.findByTipoDispositivo(jogo);
 	}
 
 }
