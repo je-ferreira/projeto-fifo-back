@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -123,10 +124,14 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+    Optional<Object> findByCargo(CargoUsuario admin) {
+        return usuarioRepository.findByCargoUsuario(admin);
+    }
+
     private <T, U> T mergeIdToNull(U id, U nullCase, T atual, Function<U, T> finder){
         if(id == null) return atual;
         if(id.equals(nullCase)) return null;
         return finder.apply(id);
     }
-    
+
 }

@@ -1,6 +1,7 @@
 package com.squad5.fifo.service;
 
 import com.squad5.fifo.dto.*;
+import com.squad5.fifo.model.CargoUsuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class PrePersistence {
 
     @PostConstruct
     private void inti(){
+        if(usuarioService.findByCargo(CargoUsuario.ADMIN).isPresent()) return;
         admin();
         fCamaraDados();
     }

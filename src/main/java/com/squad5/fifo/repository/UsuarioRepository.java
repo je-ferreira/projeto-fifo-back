@@ -1,5 +1,6 @@
 package com.squad5.fifo.repository;
 
+import com.squad5.fifo.model.CargoUsuario;
 import com.squad5.fifo.model.Dispositivo;
 import com.squad5.fifo.model.Usuario;
 import com.squad5.fifo.model.Vez;
@@ -21,5 +22,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Long countByVezDispositivoAndVezEntradaNotNullAndVezSaidaNull(Dispositivo dispositivo);
 
     List<Usuario> findByVezDispositivoAndVezEntradaNotNullAndVezSaidaNullOrderByVezEntradaAsc(Dispositivo dispositivod);
+
+    Optional<Object> findByCargoUsuario(CargoUsuario cargoUsuario);
 
 }
