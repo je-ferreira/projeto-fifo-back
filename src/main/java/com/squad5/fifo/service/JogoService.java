@@ -76,7 +76,7 @@ public class JogoService {
 	}
 	
 	//TipoDispositivo
-	public JogoDTO addTipoDispositivo(@NotNull Long jogoId, @NotNull Long tipoDispositivoId) {
+	public JogoDTO addTipoDispositivo(Long jogoId, Long tipoDispositivoId) {
 		Jogo jogo = findModelById(jogoId);
 		TipoDispositivo tipoDispositivo = tipoDispositivoService.findModelById(tipoDispositivoId);
 
@@ -87,7 +87,7 @@ public class JogoService {
 		return jogoToJogoDTO(jogoRepository.save(jogo));
 	}
 	
-	public JogoDTO removeTipoDispositivo(@NotNull Long jogoId, @NotNull Long tipoDispositivoId) {
+	public JogoDTO removeTipoDispositivo(Long jogoId, Long tipoDispositivoId) {
 		Jogo jogo = findModelById(jogoId);
 		tipoDispositivoService.findModelById(tipoDispositivoId);
 		
@@ -98,7 +98,7 @@ public class JogoService {
 	}
 
 	//Dispositivo
-	public JogoDTO configurarDispositivoPreferencial(@NotNull Long jogoId, @NotNull Long dispositivoId){
+	public JogoDTO configurarDispositivoPreferencial(Long jogoId, Long dispositivoId){
 		Jogo jogo = findModelById(jogoId);
 		Dispositivo dispositivo = dispositivoService.findModelById(dispositivoId);
 		if(!jogoDispositivoSaoCompativeis(jogo, dispositivo))
