@@ -47,15 +47,10 @@ public class FilaService {
     }
 
     public ConfirmacaoDTO vezDadosConfirmacao(Long usuarioId) {
-        Vez vez = usuarioService.findModelById(usuarioId).getVez();
-        return ConfirmacaoDTO.builder()
-                .nomeDispositivo(vez.getJogo().getNome())
-                .nomeDispositivo(vez.getDispositivo().getNome())
-                .nomeConvidadoList(usuarioService.findByVez(vez).stream()
-                        .filter(usuario -> usuario.getId().equals(vez.getConvidante().getId()))
-                        .map(Usuario::getNome)
-                        .collect(Collectors.toList()))
-                .build();
+        Usuario usuario = usuarioService.findModelById(usuarioId);
+        ConfirmacaoDTO confirmacaoDTO = vezDados(usuario.getVez());
+        confirmacaoDTO.getNomeConvidadoList().removeIf(nome -> nome.equals(usuario.getNome()));
+        return confirmacaoDTO;
     }
 
     void atualizar(Dispositivo dispositivo) {
@@ -84,6 +79,16 @@ public class FilaService {
             sizeFila = sizeFilaList.get(i);
         }
         return dispositivo;
+    }
+
+    ConfirmacaoDTO vezDados(Vez vez) {
+        return ConfirmacaoDTO.builder()
+                .nomeDispositivo(vez.getJogo().getNome())
+                .nomeDispositivo(vez.getDispositivo().getNome())
+                .nomeConvidadoList(usuarioService.findByVez(vez).stream()
+                        .map(Usuario::getNome)
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     @PostConstruct

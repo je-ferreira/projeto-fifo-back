@@ -18,8 +18,6 @@ import com.squad5.fifo.dto.DispositivoDTO;
 import com.squad5.fifo.model.Dispositivo;
 import com.squad5.fifo.repository.DispositivoRepository;
 
-import javax.validation.constraints.NotNull;
-
 @Service @RequiredArgsConstructor
 public class DispositivoService {
 	
@@ -70,7 +68,7 @@ public class DispositivoService {
 		dispositivoRepository.deleteById(id);
 	}
 
-	public DispositivoDTO addTipoDispositivo(@NotNull Long dispositivoId, @NotNull Long tipoDispositivoId) {
+	public DispositivoDTO addTipoDispositivo(Long dispositivoId, Long tipoDispositivoId) {
 		Dispositivo dispositivo = findModelById(dispositivoId);
 		TipoDispositivo tipoDispositivo = tipoDispositivoService.findModelById(tipoDispositivoId);
 
@@ -81,7 +79,7 @@ public class DispositivoService {
 		return dispositivoToDispositivoDTO(dispositivoRepository.save(dispositivo));
 	}
 
-	public DispositivoDTO removeTipoDispositivo(@NotNull Long dispositivoId, @NotNull Long tipoDispositivoId) {
+	public DispositivoDTO removeTipoDispositivo(Long dispositivoId, Long tipoDispositivoId) {
 		Dispositivo dispositivo = findModelById(dispositivoId);
 		tipoDispositivoService.findModelById(tipoDispositivoId);
 
