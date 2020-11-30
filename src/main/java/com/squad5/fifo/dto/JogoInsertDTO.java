@@ -2,6 +2,7 @@ package com.squad5.fifo.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.squad5.fifo.infra.NullOrNotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,6 +21,12 @@ public class JogoInsertDTO extends JogoDTO {
 	
 	@NotNull
 	private Boolean ativo;
+
+	@NullOrNotBlank
+	private String urlsCapa;
+
+	@JsonIgnore
+	private Long dispositivoPreferencial;
 
 	@JsonIgnore
 	private List<Long> tipoDispositivoIdList;

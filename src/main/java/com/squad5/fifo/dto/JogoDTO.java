@@ -13,6 +13,10 @@ public class JogoDTO {
 
 	private Boolean ativo;
 
+	private String urlCapa;
+
+	private Long dispositivoPreferencial;
+
 	private List<Long> tipoDispositivoIdList;
 
 }

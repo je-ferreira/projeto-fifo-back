@@ -23,7 +23,7 @@ public class Vez {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date saida;
 
-	@ManyToOne(optional = false)
+	@ManyToOne
 	private Jogo jogo;
 
 	@ManyToOne

@@ -61,4 +61,9 @@ public class JogoController {
 		return jogoService.removeTipoDispositivo(jogoId, tipoDispositivoId);
 	}
 
+	@PutMapping("/{jogoId}/dispositivoPreferencial/{dispositivoId}")
+	public JogoDTO configurarDispositivoPreferencial(@PathVariable Long jogoId, @PathVariable Long dispositivoId){
+		return jogoService.configurarDispositivoPreferencial(jogoId, dispositivoId);
+	}
+
 }

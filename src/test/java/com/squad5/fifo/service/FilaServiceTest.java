@@ -93,7 +93,7 @@ public class FilaServiceTest {
         conviteAceitoDTO.setUsuario(usuarioDTO2.getId());
         vezDTO = vezService.aceitarConvite(conviteAceitoDTO);
 
-        vezDTO = vezService.entrarNaFila(vezDTO.getId());
+        vezDTO = vezService.entrarNaFila(vezDTO.getConvidante());
 
         ConviteInsertDTO convitInsertDTO2 = new ConviteInsertDTO();
         convitInsertDTO2.setJogo(jogoDTO.getId());
@@ -112,7 +112,7 @@ public class FilaServiceTest {
         conviteAceitoDTO2.setUsuario(usuarioDTO5.getId());
         vezDTO3 = vezService.aceitarConvite(conviteAceitoDTO2);
 
-        vezDTO3 = vezService.entrarNaFila(vezDTO3.getId());
+        vezDTO3 = vezService.entrarNaFila(vezDTO3.getConvidante());
 
         assertThat(filaService.gerarFila(dispositivoDTO.getId()).stream()
                 .map(UsuarioDTO::getId)
@@ -173,7 +173,7 @@ public class FilaServiceTest {
         conviteAceitoDTO.setUsuario(usuarioDTO2.getId());
         vezDTO = vezService.aceitarConvite(conviteAceitoDTO);
 
-        vezDTO = vezService.entrarNaFila(vezDTO.getId());
+        vezDTO = vezService.entrarNaFila(vezDTO.getConvidante());
 
         assertThat(filaService.dadosPagina(dispositivoDTO.getId()).getIdJogo()).isEqualTo(jogoDTO.getId());
     }

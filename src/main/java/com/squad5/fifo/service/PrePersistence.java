@@ -75,32 +75,38 @@ public class PrePersistence {
         dispositivoService.addTipoDispositivo(dispositivoDTO4.getId(), tipoDispositivoDTO4.getId());
 
         JogoInsertDTO jogoInsertDTO1 = new JogoInsertDTO();
-        jogoInsertDTO1.setNome("FIFA");
+        jogoInsertDTO1.setNome("FIFA 2020");
         jogoInsertDTO1.setAtivo(true);
+        jogoInsertDTO1.setUrlsCapa("https://i.imgur.com/qXQ9TaV.png");
         JogoDTO jogoDTO1 = jogoService.insert(jogoInsertDTO1);
         jogoService.addTipoDispositivo(jogoDTO1.getId(), tipoDispositivoDTO1.getId());
+        jogoService.configurarDispositivoPreferencial(jogoDTO1.getId(), dispositivoDTO1.getId());
 
         JogoInsertDTO jogoInsertDTO2 = new JogoInsertDTO();
         jogoInsertDTO2.setNome("Mortal Kombat");
         jogoInsertDTO2.setAtivo(true);
+        jogoInsertDTO2.setUrlsCapa("https://i.imgur.com/SJPtsZn.jpeg");
         JogoDTO jogoDTO2 = jogoService.insert(jogoInsertDTO2);
         jogoService.addTipoDispositivo(jogoDTO2.getId(), tipoDispositivoDTO1.getId());
 
         JogoInsertDTO jogoInsertDTO3 = new JogoInsertDTO();
         jogoInsertDTO3.setNome("Beat Saber");
         jogoInsertDTO3.setAtivo(true);
+        jogoInsertDTO3.setUrlsCapa("https://i.imgur.com/9Nq3nJe.jpeg");
         JogoDTO jogoDTO3 = jogoService.insert(jogoInsertDTO3);
         jogoService.addTipoDispositivo(jogoDTO3.getId(), tipoDispositivoDTO1.getId());
 
         JogoInsertDTO jogoInsertDTO4 = new JogoInsertDTO();
         jogoInsertDTO4.setNome("Sinuca");
         jogoInsertDTO4.setAtivo(true);
+        jogoInsertDTO4.setUrlsCapa("https://i.imgur.com/SDaSNE9.jpeg");
         JogoDTO jogoDTO4 = jogoService.insert(jogoInsertDTO4);
         jogoService.addTipoDispositivo(jogoDTO4.getId(), tipoDispositivoDTO3.getId());
 
         JogoInsertDTO jogoInsertDTO5 = new JogoInsertDTO();
         jogoInsertDTO5.setNome("Ping Pong");
         jogoInsertDTO5.setAtivo(true);
+        jogoInsertDTO5.setUrlsCapa("https://i.imgur.com/YVXf7wl.jpeg");
         JogoDTO jogoDTO5 = jogoService.insert(jogoInsertDTO5);
         jogoService.addTipoDispositivo(jogoDTO5.getId(), tipoDispositivoDTO4.getId());
     }

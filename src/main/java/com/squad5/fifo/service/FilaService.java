@@ -1,20 +1,25 @@
 package com.squad5.fifo.service;
 
+import com.squad5.fifo.dto.ConfirmacaoDTO;
 import com.squad5.fifo.dto.FilaPaginaDTO;
 import com.squad5.fifo.dto.UsuarioDTO;
 import com.squad5.fifo.model.Dispositivo;
 import com.squad5.fifo.model.Jogo;
+import com.squad5.fifo.model.Usuario;
 import com.squad5.fifo.model.Vez;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service @RequiredArgsConstructor
 public class FilaService {
+
+    private static final String MSG_DISPOSITIVO_TIPO_NAO_EXISTE = "Não há um dispositivo com um tipo do jogo informado.";
 
     private final ParticipacaoService participacaoService;
 
@@ -41,6 +46,18 @@ public class FilaService {
                 .build();
     }
 
+    public ConfirmacaoDTO vezDadosConfirmacao(Long usuarioId) {
+        Vez vez = usuarioService.findModelById(usuarioId).getVez();
+        return ConfirmacaoDTO.builder()
+                .nomeDispositivo(vez.getJogo().getNome())
+                .nomeDispositivo(vez.getDispositivo().getNome())
+                .nomeConvidadoList(usuarioService.findByVez(vez).stream()
+                        .filter(usuario -> usuario.getId().equals(vez.getConvidante().getId()))
+                        .map(Usuario::getNome)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
     void atualizar(Dispositivo dispositivo) {
         Optional<Vez> vezOptional = vezService.findPrimeiroDaFila(dispositivo);
         if(!vezOptional.isPresent()) return;
@@ -53,7 +70,20 @@ public class FilaService {
     }
 
     Dispositivo procuraDispositivo(Jogo jogo) {
-        return dispositivoService.findFirstByTipoDispositivo(jogo);
+        if(jogo.getDispositivoPreferencial() != null) return jogo.getDispositivoPreferencial();
+        List<Dispositivo> dispositivoList = dispositivoService.findAllByTipoDispositivo(jogo);
+        if(dispositivoList.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_DISPOSITIVO_TIPO_NAO_EXISTE);
+
+        List<Long> sizeFilaList = dispositivoList.stream()
+                .map(usuarioService::countByVezDispositivoAndVezEntradaNotNullAndVezSaidaNull)
+                .collect(Collectors.toList());
+        Dispositivo dispositivo = dispositivoList.get(0);
+        Long sizeFila = sizeFilaList.get(0);
+        for(int i = 1; i < dispositivoList.size(); i++) if(sizeFilaList.get(i) < sizeFila){
+            dispositivo = dispositivoList.get(i);
+            sizeFila = sizeFilaList.get(i);
+        }
+        return dispositivo;
     }
 
     @PostConstruct

@@ -1,9 +1,6 @@
 package com.squad5.fifo.service;
 
-import com.squad5.fifo.dto.ConviteAceitoDTO;
-import com.squad5.fifo.dto.ConviteInsertDTO;
-import com.squad5.fifo.dto.UsuarioUpdateDTO;
-import com.squad5.fifo.dto.VezDTO;
+import com.squad5.fifo.dto.*;
 import com.squad5.fifo.model.Dispositivo;
 import com.squad5.fifo.model.Jogo;
 import com.squad5.fifo.model.Usuario;
@@ -32,6 +29,7 @@ public class VezService {
     private static final String MSG_USUARIO_OCUPADO = "O usuário já está na fila ou jogando.";
     private static final String MSG_HA_CONVITES_PENDENTES = "Ainda há convites pendentes.";
     private static final String MSG_VEZ_JA_NAFILA = "Essa vez já está nessa ou em alguma fila.";
+    private static final String MSG_JGODO_E_DISPOSITIVO_INCONPATIVEIS = "O dispositivo e o jogo são incompatíveis.";
 
     private final VezRepository vezReporsitory;
 
@@ -56,18 +54,24 @@ public class VezService {
         if(usuario.getVez() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_USUARIO_OCUPADO);
         Jogo jogo = jogoService.findModelById(convitInsertDTO.getJogo());
         Dispositivo dispositivo;
-        if(convitInsertDTO.getDispositivo() != null) dispositivo = dispositivoService.findModelById(convitInsertDTO.getDispositivo());
-        else dispositivo = null;
+        if(convitInsertDTO.getDispositivo() != null){
+            dispositivo = dispositivoService.findModelById(convitInsertDTO.getDispositivo());
+            if(!jogoService.jogoDispositivoSaoCompativeis(jogo, dispositivo))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_JGODO_E_DISPOSITIVO_INCONPATIVEIS);
+        }
+        else dispositivo = filaService.procuraDispositivo(jogo);
 
-        Vez vez = insertNewModel(jogoService.findModelById(jogo.getId()));
+        Vez vez = new Vez();
+        vez.setJogo(jogo);
         vez.setDispositivo(dispositivo);
-        usuario.setVez(vez);
         vez.setConvidante(usuario);
-
-        usuarioService.update(modelMapper.map(usuarioService.usuarioToUsuarioDTO(usuario), UsuarioUpdateDTO.class));
         vez.setConvidadoPendenteList(usuarioList);
         vez = vezReporsitory.save(vez);
-        if(vez.getConvidadoPendenteList().isEmpty()) entrarNaFila(vez.getId());
+
+        usuario.setVez(vez);
+        usuarioService.update(modelMapper.map(usuarioService.usuarioToUsuarioDTO(usuario), UsuarioUpdateDTO.class));
+
+        if(vez.getConvidadoPendenteList().isEmpty()) entrarNaFila(vez.getConvidante().getId());
         return vezToVezDTO(vez);
     }
 
@@ -86,12 +90,11 @@ public class VezService {
         return vezToVezDTO(vezReporsitory.save(vez));
     }
 
-    public VezDTO entrarNaFila(Long vezId) {
-        Vez vez = findModelById(vezId);
+    public VezDTO entrarNaFila(Long usuarioId) {
+        Vez vez = usuarioService.findModelById(usuarioId).getVez();
         if(!vez.getConvidadoPendenteList().isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_HA_CONVITES_PENDENTES);
         if(vez.getEntrada() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_VEZ_JA_NAFILA);
-        if(vez.getDispositivo() == null) vez.setDispositivo(filaService.procuraDispositivo(vez.getJogo()));
         vez.setEntrada(new Date());
 
         vez = vezReporsitory.save(vez);
@@ -108,13 +111,6 @@ public class VezService {
         return vezReporsitory.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, MSG_ID_NAO_ENCONTRADO)
         );
-    }
-
-    Vez insertNewModel(Jogo jogo) {
-        return vezReporsitory.save(Vez.builder()
-                .jogo(jogo)
-                .convidadoPendenteList(new ArrayList<>())
-                .build());
     }
 
     Vez updateModel(Vez vez) {
